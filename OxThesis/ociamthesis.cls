@@ -145,7 +145,7 @@
 	% where x is:
 	% A	uppercase letters (as produced by \Alph)
 	% a	lowercase letters (as produced by \alph)
-	% I	uppercase roman numerals (as produced by \Roman)
+	% I	uppercase  numerals (as produced by \Roman)
 	% i	lowercase roman numerals (as produced by \roman)
 	% 1	arabic numbers (as produced by \arabic)
 	
@@ -312,7 +312,7 @@
 
 %ROMANPAGES
 %
-% The romanpages environment set the page numbering to lowercase roman one
+% The pages environment set the page numbering to lowercase roman one
 % for the contents and figures lists. It also resets
 % page-numbering for the remainder of the dissertation (arabic, starting at 1).
 %
