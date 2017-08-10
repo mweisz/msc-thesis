@@ -1,8 +1,37 @@
 Motivation:
-
+ ☐ More and more data
+   ☐ List some examples
+ ☐ Machine learning helps to make sense of this data
+ ☐ Observational studies are of great relevance
+ ☐ Answer counterfactual questions
+ ☐ Want to predict the individualised treatment assignemnt
+   ☐ Example of what we can do with that (Treatment planning etc.)
+ ☐ Machine Learning is suitable
+ ☐ Deep Learning in particular
+   ☐ What is the main idea of deep learning?
+   ☐ Why, what are the benefits
+ ☐ What is the status quo?
+ ☐ What are we trying to improve
+ ☐ How can we use the specifics of the problem to improve outomes?
 
 Scope and Contribution:
+ ☐ What has already been done? (Briefly)
+ ☐ What are we investigating
+   ☐ Deep Learning for counterfactual inference
+   ☐ How to make the models perform better
+   ☐ Arechitectural changes
+   ☐ Techniques such as dropout
+   ☐ Learning architecture
 
+   ☐ Propose Deep Counterfactual Network
+     ☐ Multi-Task learning
+     ☐ Propensity-based dropout
+     ☐ Provide individualized measures of uncertainty in ETE
+   ☐ Architecture Learning
+     ☐ Identify Characteristics
+     ☐ Empirical Model 
+     ☐ Algorithm to automatically learn architecture
 
 Thesus Structure:
-
+  ☐ Background of machine learning
+  ☐ Chapter summaries
