@@ -18,11 +18,12 @@
 
 % This one will format for two-sided binding (ie left and right pages have mirror margins; blank pages inserted where needed):
 % FINAL Switch to binding format
-%\documentclass[a4paper,twoside]{ociamthesis}
+% FINAL Consider if I want to remove the hidelinks option
+%\documentclass[hidelinks,a4paper,twoside]{ociamthesis}
 % This one will format for one-sided binding (ie left margin > right margin; no extra blank pages):
-%\documentclass[a4paper]{ociamthesis}
+%\documentclass[hidelinks, a4paper]{ociamthesis}
 % This one will format for PDF output (ie equal margins, no extra blank pages):
-\documentclass[a4paper,nobind]{ociamthesis} 
+\documentclass[hidelinks, a4paper,nobind]{ociamthesis} 
 
 
 
@@ -116,6 +117,7 @@
 %%%%%%%% My packages
 %\usepackage[nolist,nohyperlinks]{acronym}
 \usepackage{nameref}
+
 %%%%%%%
 
 
@@ -250,6 +252,8 @@
 % Add or remove any appendices you'd like here:
 %\include{text/appendix-1}
 
+% FINAL Remove this:
+\nocite{dummy-source}
 
 %%%%% REFERENCES
 
