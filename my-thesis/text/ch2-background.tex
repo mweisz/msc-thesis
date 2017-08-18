@@ -182,7 +182,7 @@ The individual artificial neuron or unit is illustrated in figure \ref{fig:artif
 	% MATHS Check, looks weird with b in front
 	y = \phi(b + \sum_{i=1}^{n} w_i x_i)
 \end{equation}
-where $x_1, \ldots, x_n \in \mathbb{R}$ corresponds to the inputs of the neuron, $w_1, \ldots, w_n\in \mathbb{R}$ to the weights and $b \in \mathbb{R}$ to a bias -- trainable parameters of the model -- and $\phi: \mathbb{R} \rightarrow \mathbb{R}$ to a non-linear function referred to as \emph{activation function}. Typical choices for $\phi$ include 
+where $x_1, \ldots, x_n \in \mathbb{R}$ corresponds to the inputs of the neuron, $w_1, \dots, w_n\in \mathbb{R}$ to the weights and $b \in \mathbb{R}$ to a bias -- trainable parameters of the model -- and $\phi: \mathbb{R} \rightarrow \mathbb{R}$ to a non-linear function referred to as \emph{activation function}. Typical choices for $\phi$ include 
 \begin{align*} 
 \phi(x) = \sigma(x) = \frac{1}{1 + e^{-x}} && \text{or} && \phi(x) = tanh(x) = \frac{1  - e^{-2x}}{1  + e^{-2x}}
 \end{align*} 
@@ -206,10 +206,47 @@ where $\sigma(x)$ refers to the \emph{sigmoid function}, $tanh(x)$ to the \emph{
 
 Despite the relative simplicity of this model, it can be shown that an MLP with appropriate weights and bias parameters is able to represent any arbitrarily complex non-linear function.% CITE Who showed this? Cybenko!
 
-\subsection{Training}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+\subsection{Types of Neural Networks}
+There are different types of neural networks defined by a number of characteristics such as network's architecture and the direction of information flow. 
 
-\subsection{Types and Topologies}
+% QUESTION: What's the difference between MLP and standard ff nn? 
+\paragraph{Feed-Forward Neural Networks} Closely related to the MLP described in the previous section, feed-forward neural networks (FFNN) represent a class of networks that is characterised by a set of hidden layers that have a similar shape and are often fully connected (i.e. every node in layer $L_i$ is connected to every node in layer $L_{i-1}$ and $L_{i+1}$). As the name suggest, the information flow is strictly uni-directional from nodes in layers with lower indexes to nodes with higher indexes (i.e. no loops). These types of networks represent the most basic type of network that makes no assumptions about the input data and is used in regression and classification tasks.  
+
+\paragraph{Convolutional Neural Networks} While FFNNs make no assumptions about the input data whatsoever, it is often useful to exploit domain-specific knowledge about the specific input data. For instance, in computer vision the input of a network is typically an image encoded as pixmap with the intensity values of each pixel. In this case, it seems naive and inefficient to assume independence of the inputs ignoring aspects like the principle of locality of neighbouring pixels which are more likely to have a similar colour or intensity than two randomly-selected pixels. 
+% ALT: In contrast to FFNNs which make no assumption about the input whatserver, Convnets are designed to exploit domain-specific knowledge. In computer vision for instance, we can ... 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=1\textwidth]{figures/chapter-2/convnet.png}
+	\caption{Convolutional Neural Network}\label{fig:convnet}   
+\end{figure}
+A convolutional neural network or ConvNet is a special kind of feed-forward neural network whose architecture is designed to exploit the principle of locality in the data. This is typically achieved by alternating \emph{convolutional layers} and \emph{pooling layers}. The convolutional layers run a filter or \emph{kernel} across the their input layer which performs an image convolution and can be thought of a way to detect features (such as edges) in the image. The pooling layers typically perform some kind of aggregation (such as taking the maximum of multiple values) over the previous layer to reduce the dimensionality. 
+
+While convnets are particularly useful in computer vision and represent the state-of-the-art in image classification % CITE imagenet
+, they can also be applied in other fields in which the data expresses some principle of locality. 
+
+\paragraph{Recurrent Neural Networks} In contrast to FFNNs and convnets for which the information flow is strictly uni-directional, recurrent neural networks (RNNs) are characterised by some kind of feedback loop that allows the outputs of a unit in layer $L_i$ to be process as input by any other layer $L_j$, even if $i \geq j$.
+
+This allows the network to keep an internal state which can be conceptualised as memory. Such a memory enables the network to effectively deal with sequences of data such as time-series values, natural language, or even music. 
+
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+	\centering
+	\includegraphics[width=0.4\textwidth]{figures/chapter-2/lstm.png}
+	\caption{LSTM}\label{fig:lstm}   
+\end{wrapfigure}
+
+In spite of the benefits the recurrent architecture of the network provides, it also introduces a number of computational challenges such as the so called \emph{vanishing gradient problem} which stems from the additional distance the gradient is backpropagates (see next section % TODO Reconsider training section. Should it come before? 
+) in the computation graph of the network causing the gradient. In order to circumvent this problem, a number architectures has been proposed for an individual cell within the RNN, most notably \emph{long short-term memory} (LSTM) cells and \emph{gated recurrent units} (GRUs). As illustrated in figure \ref{fig:lstm} an LSTM achieves this using a number of \emph{gates} that allow the cell to decide when to store and when to reset (i.e. forget) its internal state. 
+% TODO Explain this properly. Make sure I fully understand it myself. ;) 
+
+Today for many problems in machine learning, RNNs represent the state-of-the-art when dealing with sequential data such as natural language and time-series. 
+
+
+
+
+
+
+\subsection{Training}
 Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
 
 \subsection{Multi-Task Learning}
