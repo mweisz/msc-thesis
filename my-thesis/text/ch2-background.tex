@@ -59,8 +59,7 @@ A most prominent example was mentioned earlier with the task of autonomous drivi
 
 % TODO! Re-create graph!
 \begin{figure}[]
-	\label{fig:machine-learning-approach}
-	\caption{Schematic Approach of Machine Learning. A selected model $M$ is trained on a dataset $D$ using a learning algorithm $A$.}
+	\caption{Schematic Approach of Machine Learning. A selected model $M$ is trained on a dataset $D$ using a learning algorithm $A$.} \label{fig:machine-learning-approach}
 	\centering
 	\includegraphics[width=0.5\textwidth]{figures/chapter-2/machine-learning-approach.png}
 \end{figure}
@@ -93,7 +92,11 @@ This dissertation focuses on using \emph{deep learning} for the problem of count
 When training our model we have to find the right balance between fitting it most accurately to the training data while making sure that the model generalises will for unseen data points. 
 Given that the expressiveness of the model is sufficiently high to capture it, we might naively fit our model to the training data perfectly, resulting in a training error of zero. This, however, would merely "memorise" the training data and might perform poorly on unseen future data points. This phenomenon where we overfit the training data is often referred to as \emph{high variance}. 
 In contrast, if the model is too simple, we night not be able to accurately capture the relationship in our data leading to equally poor results. In this case, we are under-fitting the data and our model has a so called \emph{high bias}.
-Therefore, the goal is to train the model in a way that neither overfits nor underfits and generalises well to unseen datapoints. This can be achieved by a concept called \emph{regulariation}.  
+Therefore, the goal is to train the model in a way that neither overfits nor underfits and generalises well to unseen datapoints. This can be achieved by a concept called \emph{regulariation}.
+
+% TODO Add formula for objective functions with L1 and L2 regularisation
+
+% TODO Regularistion is actually just for avoiding overfitting!   
 
 % TODO! Re-create graph!
 \begin{figure}[]
@@ -117,14 +120,91 @@ Therefore, the goal is to train the model in a way that neither overfits nor und
 
 
 \section{Deep Learning}
-\subsection{Motivation}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+\subsection{Introduction}
+Deep learning refers to a field of machine learning that is based on the use of so called \emph{deep neural networks}. 
 
-\subsection{The Perceptron}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+The approach is inspired by how the human brain works by modelling biological neurons and their interconnections to other neurons as terms of an artificial neuron that has similar properties. 
 
-\subsection{Multi-Layer-Perceptron}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+The details about our understanding of the inner mechanics and biochemical processes of the human brain are beyond the scope of this thesis. On a high level, however, Each neuron receives inputs signals on its dendrites which are connected to neighbouring neurons axons using a synapse. The inputs are accumulated and processed within the cell body causing the cell to output a signal on its own axon which in turn represents the potential input for other cells.
+% TODO Refine this. Make sure this is correct and in the right section! What exactly is a synapse. 
+Through these interconnections the neurons form a highly complex structure that can be conceptualised in terms of a biological neural network. It is estimated that the human brain possesses about 100 billion allowing it to process complex signals, abstract concepts, and the general process people refer to as \emph{thinking}. 
+% TODO What about learning? 
+
+In a bionic fashion an artificial neural network adopts this architecture in a simplified way by defining a network of artificial neurons that are connected according to a certain topology. The analogy between the human and the artificial neurons is illustrated in figure \ref{fig:biological-vs-artificial-neuron}. 
+This way, an artificial neural network (henceforth called neural network), is able to capture complex correlations and interdependencies within the data. 
+
+% GRAPH Recreate graph
+\begin{figure}[h]
+	\caption{A biological neuron vs. an artificial neuron}\label{fig:biological-vs-artificial-neuron}
+	% GRAPH-LABEL Add proper description
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/chapter-2/biological-vs-artificial-neurons.png}
+\end{figure}
+
+
+The concepts of using neural networks has been in existence since the 1970s. % CITE first neural networks
+After an initial enthusiasm, however, neural networks lost traction in the following two decades due to the realisation that the existing hardware did not allow for a degree of scalability that would have been required to solve the desired problems. % CITE ai-winter
+
+This changed, however, when in 2014 X,Y, and Z used a neural network outperformed all existing methods on the \emph{ImageNet Challenge} which seeks to recognise and label a set of objects in pictures. % CITE imagenet
+
+Ever since, deep neural networks have been responsible for some of the most recent successes including self-driving cars and defeating the world champion in Go. % CITE Go 
+According to former chief data scientist and researcher at Stanford University, Andrew Ng, % CITE Andrew Ng 
+two key factors are responsible for renaissance of neural networks and have enabled its recent success: Firstly, the advances in computational capacities which includes highly-optimised processing units such as GPUs and ASICS % CHECK ASICS? 
+and corresponding architectures such as distributed clusters and cloud computing. Secondly, the availability of large datasets that can be used for training the models such as web-scale text corpora for natural language processing or large databases of images (imagenet) etc. 
+
+Today, deep neural networks represent the state-of-the-art in many areas such as natural language processing % CITE NLP
+and computer vision. They are widely considered one of the most promising areas of machine learning and artificial intelligence in general % CITE importance of deep learning
+and have received a high level of attention in society, media, and politics. Despite its recent success, the usage of deep neural networks poses a multitude of computational, architectural, and domain-specific challenges % CITE Do I need to cite this? 
+and therefore represents of most dynamic areas of research. 
+
+\subsection{The Multilayer Perceptron}
+In order to understand how neural networks work, we first investigate one of the most basic forms of neural networks: the \emph{multilayer perceptron} or MLP. 
+% TODO Is a perceptron the same thing as a neuron? Are there other kinds of neurons? 
+% GRAPH Redo graph
+\begin{figure}[H]
+
+\caption{Prototypical multilayer perceptron with a single hidden layer.}\label{fig:multilayer-perceptron}
+% GRAPH-LABEL Add proper description
+\centering
+\includegraphics[width=0.6\textwidth]{figures/chapter-2/multilayer-perceptron.png}
+\end{figure}
+Figure \ref{fig:multilayer-perceptron} depicts the schematics of an MLP. As the name suggests, it consists of multiple layers each containing a fixed number of artificial neurons that are interconnected exclusively by neurons of neighbouring layers. The first, so called \emph{input layer}, is followed by one or more hidden layers leading to a final so called \emph{output layer}. 
+
+\begin{figure}[h]
+	\caption{Basic building block: Artificial Neuron used for classification.}\label{fig:artificial-neuron}   
+	\centering
+	\includegraphics[width=0.6\textwidth]{figures/chapter-2/artificial-neuron.png}
+\end{figure}
+
+
+The individual artificial neuron or unit is illustrated in figure \ref{fig:artificial-neuron}. Its output $y$ is computed as 
+\begin{equation}
+	% MATHS Check, looks weird with b in front
+	y = \phi(b + \sum_{i=1}^{n} w_i x_i)
+\end{equation}
+where $x_1, \ldots, x_n \in \mathbb{R}$ corresponds to the inputs of the neuron, $w_1, \ldots, w_n\in \mathbb{R}$ to the weights and $b \in \mathbb{R}$ to a bias -- trainable parameters of the model -- and $\phi: \mathbb{R} \rightarrow \mathbb{R}$ to a non-linear function referred to as \emph{activation function}. Typical choices for $\phi$ include 
+\begin{align*} 
+\phi(x) = \sigma(x) = \frac{1}{1 + e^{-x}} && \text{or} && \phi(x) = tanh(x) = \frac{1  - e^{-2x}}{1  + e^{-2x}}
+\end{align*} 
+where $\sigma(x)$ refers to the \emph{sigmoid function}, $tanh(x)$ to the \emph{hyperbolic tangent}, and 
+% TODO Add another activation function
+... to Z. While each of these activation functions has different properties as illustrated in figure \ref{fig:activation-functions}, a typical characteristic is that they map the input value to the closed interval $[0, 1]$. 
+
+\begin{figure}[h]
+	\caption{Typical Activation functions}\label{fig:activation-functions}   
+	\centering
+	\includegraphics[width=0.6\textwidth]{figures/chapter-2/activation-functions.png}
+\end{figure}
+
+
+% TODO What else do I need to write about MLPs?  Equations for the outcome? 
+%Given this definition of a single unit, the final value $y$ of the outcome layer can be formalised as the concatenation of the different activation functions forward-propagated from the input layer to the output layer. For the MLP depicted in figure \ref{fig:multilayer-perceptron}, this means.
+%
+%\begin{align}
+%x = 
+%\end{align}
+
+Despite the relative simplicity of this model, it can be shown that an MLP with appropriate weights and bias parameters is able to represent any arbitrarily complex non-linear function.% CITE Who showed this? Cybenko!
 
 \subsection{Training}
 Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
