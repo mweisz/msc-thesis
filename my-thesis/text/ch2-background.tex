@@ -88,7 +88,7 @@ This dissertation focuses on using \emph{deep learning} for the problem of count
 %What's the challenge? (local minimum, symmetries, etc.)
 %% TODO Include graph
 
-\subsection{Regularisation}
+\subsection{Regularisation} \label{sec:regularisation}
 When training our model we have to find the right balance between fitting it most accurately to the training data while making sure that the model generalises will for unseen data points. 
 Given that the expressiveness of the model is sufficiently high to capture it, we might naively fit our model to the training data perfectly, resulting in a training error of zero. This, however, would merely "memorise" the training data and might perform poorly on unseen future data points. This phenomenon where we overfit the training data is often referred to as \emph{high variance}. 
 In contrast, if the model is too simple, we night not be able to accurately capture the relationship in our data leading to equally poor results. In this case, we are under-fitting the data and our model has a so called \emph{high bias}.
@@ -206,7 +206,7 @@ where $\sigma(x)$ refers to the \emph{sigmoid function}, $tanh(x)$ to the \emph{
 
 Despite the relative simplicity of this model, it can be shown that an MLP with appropriate weights and bias parameters is able to represent any arbitrarily complex non-linear function.% CITE Who showed this? Cybenko!
 
-\subsection{Types of Neural Networks}
+\subsection{Types of Neural Networks} \label{sec:nn-types}
 There are different types of neural networks defined by a number of characteristics such as network's architecture and the direction of information flow. 
 
 % QUESTION: What's the difference between MLP and standard ff nn? 
@@ -289,30 +289,115 @@ There two main types of gradient descent: \emph{batch gradient descent} computes
 In the 1980s, X, Y, and Z % TODO Add history and contribution of backprop. Who invented it? When was it popularised? 
 introduced an efficient method to achieve this which they called the \emph{backpropagation algorithm}. The algorithm conceptualised the network as a concatenation of functions and is based on the simple idea of repeatedly applying the \emph{chain rule} as known in calculus to compute the partial derivatives with respect to each parameter (weights and biases) of interest. 
 
- However, for neural networks computing the individual derivatives 
 
-\begin{enumerate}
-	\item What does training mean? What is the main principle? We want to learn parameters (weights+bias). 
-	\item Backpropagation. History, when was it discovered? How does it work on high-level? What does each pass do? 
-	\item Explain splits train, test, val
-	\item Equations... Formalisation
-	\item Challenges (symmetry, local optima, initialisation, complexity, memory)
-\end{enumerate}
+\begin{wrapfigure}{r}{0.4\textwidth}
+	\caption{Backpropagation}\label{fig:backpropagation}   
+	\centering
+	\includegraphics[height=0.6\textwidth]{figures/chapter-2/backpropagation.png}
+\end{wrapfigure}
+
+
+The training is then executed in two alternating phases as illustrated in figure \ref{fig:backpropagation}: In the \emph{forward pass} the inputs are propagated through the network from the input layer through the hidden layers until a predicted outcome $\hat{Y}$ is available in the output layer. Using the predicted outcome $\hat{Y}_i$, the actual outcome $Y_i$, and the loss function we are able to compute a loss \emph{l}.
+In the second phase -- the \emph{backward pass} the partial derivatives are computed for the weights and biases of each unit all the way back until the first layer after the input layer. 
+
+Once the partial derivatives are computed, we can update each parameter according to our optimisation algorithm (e.g. using gradient descent as described above). 
+The backpropagation algorithm therefore represents an effective mean to compute the gradient of the loss function and can be considered an essential part of the training of neural networks. 
+
+
+
+% TODO Check if should include any of the things below
+%
+%
+%\begin{enumerate}
+%	\item What does training mean? What is the main principle? We want to learn parameters (weights+bias). 
+%	\item Backpropagation. History, when was it discovered? How does it work on high-level? What does each pass do? 
+%	\item Explain splits train, test, val
+%	\item Equations... Formalisation
+%	\item Challenges (symmetry, local optima, initialisation, complexity, memory)
+%\end{enumerate}
 
 \subsection{Dropout}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit senectus pretium, platea cras proin scelerisque.
+As described in section \ref{sec:regularisation}, regularisation is an important concept in machine learning in order to avoid overfitting the training data. While in theory, a traditional approaches like \emph{l1} (lasso) and \emph{l2} (weight-decay) are possible, a number of different regularisation techniques have been proposed that are specific to the mechanics of neural networks. 
+
+One of the most-used approaches is called \emph{dropout} and was proposed by % CITE Hinton
+in 2014. The basic idea is that during training every neuron is kept active only with a certain probability $p$. With a probability of $1-p$ it represents an output of zero otherwise. Intuitively, this prevents the network from becoming too dependent on a particular neuron as it is forced to learn an alternative representation when it is disabled. As a consequence, the network learns a representation that generalises better giving dropout a regularising influence on the network. Similar to the regularisation hyper-paremeter $\lambda$ described in \ref{sec:regularisation}, the dropout probablity $p$ represents a hyper-parameter that has to be chosen appropriately.
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/chapter-2/dropout.png}
+		\caption{Dropout}\label{fig:dropout}
+\end{figure}
+
+
+% TODO Consider Dropconnect! Should I also include this? 
+
+
+Figure \ref{fig:dropout} illustrates this concept: The original network (right side) is thinned out by the dropout resulting in the network on the right side. 
+
+Today, dropout represents the de-facto standard for regularising neural networks and preventing them from overfitting. 
+
 
 \subsection{Multi-Task Learning}
-Read chapter about multi-task learning! \\
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+Neural networks are typically used to perform a single task that is formalised by minimising an appropriate objective function. However, sometimes it is desirable to train the network on multiple (related) tasks simultaneously. 
+\begin{wrapfigure}{r}{0.4\textwidth}
+	\caption{Multi-Task Learning}\label{fig:multitask-learning}   
+	\centering
+	\includegraphics[width=0.4\textwidth]{figures/chapter-2/multitask-learning.png}
+\end{wrapfigure}
+As illustrated in figure \ref{fig:multitask-learning}, such a multi-task neural network is characterised by a number of layers that are shared among all tasks and a number of layers that are task-specific. Each task typically provides its own objective function which is optimised jointly with the objective functions of the other tasks. 
+Multi-task learning can have a variety of desirable properties: Firstly, multi-task neural networks are typically less prone to overfitting as the shared layers have a regularising effect on the network forcing it to learn a shared representation among all tasks. In addition, they allow influencing the way a task is learnt on a more fine-grained level by introducing inductive biases that are provided by the other tasks. This means that we can make a primary task more inclined towards considering related sub-tasks. 
+% CITE Inductive bias
 
-\subsection{Architecture Learning and Hyper-Parameter Selection}
+As typical example for multi-task learning, we consider training a spam classifier for emails. Different users might have different distributions over the features of emails they receive due to factors such as language, contacts, age, and interests which can be conceptualised as a number of different tasks. Despite their differences these tasks are highly related allowing us to treat the classifier as a multitask-learning problem. Ideally, the shared layers would learn common concepts of the characteristics of spam emails whereas the individual task-specific layers would take into account the specific characteristics of the user. 
+
+% ... "Bias-free learning is impossible; much of the power of an inductive learner follows directly from the power of its inductive bias [Mitchell 1980]."
+
+% CITE Sebastian Ruder
+% CITE http://www.cs.cornell.edu/~caruana/mlj97.pdf
+
+
+
+
+\subsection{Model Selection and Architecture Learning} % TODO Is this the right expression? 
+In section \ref{sec:nn-types} we described the three main types of neural networks which are each suitable for different kinds of tasks. However, even after deciding on a specific type, there are a number of architectural choices that are of great importance for the performance of the model. These architectural choices can be considered as model-level hyper-parameters that are typically defined a-priori and have to be chosen appropriately in addition to the hyper-parameters that were already discussed in the previous sections (e.g. learning rate $\alpha$, dropout probability $p$, activation function $f$, etc.). These following lists typical model-level hyper-parameters and how they might affect the network. 
+
+\subsubsection{Model Hyperparameters}
+\paragraph{i) Number of layers} The number of layers (or depth) of the network is a key design decision for the model's architecture and greatly influences its performance. In general, a higher number of layer results in a more complex model with high variance increasing its expressiveness and ability to capture complex non-linear dependencies. On the flip side, % TODO Can I say this? 
+this leads to an increased probability of over-fitting the training data and therefore requires stronger regularisation. From a practical perspective, a higher number of layers will cause the training to more computationally expensive and requires more memory to store the trained parameters. Consequently, the choice reflects the classical tradeoff between bias and variance discussed in \ref{sec:regularisation} and depends on the amount of available data and computational resources. 
+
+%| Number of Hidden Layers | Result |
+%
+%0 - Only capable of representing linear separable functions or decisions.
+%
+%1 - Can approximate any function that contains a continuous mapping
+%from one finite space to another.
+%
+%2 - Can represent an arbitrary decision boundary to arbitrary accuracy
+%with rational activation functions and can approximate any smooth
+%mapping to any accuracy.
+% TODO Point out that 2-4 layers almost always sufficient!
+% TODO Should I include sample number and heuristics? 
+% CITE some paper...
+
+\paragraph{ii) Number of units per layer} In addition to the number of hidden layers, we need to decide on an appropriate number of units per hidden layer (network width). The decision follows a rationale similar to the number of layers: A high number of units per layer increase the variance of the model allowing it to accommodate more complex functions at the cost of more computational complexity and the danger of over-fitting.  
+
+
+\subsubsection{Hyper-Parameter Optimisation}
+In contrast to the ordinary parameters (weights and biases) of the model, hyper-parameters are typically not learnt during training but need to be chosen appropriate a-priori. However, there are three main techniques to derive suitable hyper-parameters:
+
+\paragraph{i) Grid Search} The most basic form of finding appropriate hyper-parameters is to perform a \emph{grid search}. This means iteratively trying out a set of candidate values for each hyper-parameter and thereby exhaustively searching the space of potential hyper-parameters. After each iteration, the model is trained and then evaluated on a dedicated \emph{cross validation set}. % TODO Make sure I mention the splits somewheher!
+While this approach is doable for a small space search space, it becomes computationally infeasible if the potential hyper-parameters (or their combinations) is large. 
+
+\paragraph{ii) Random Search} An alternative to grid search that is computationally less expensive is \emph{random search}. Instead of trying every possible hyper-parameter in the search space exhaustively, this approach randomly samples hyper-parameters from the search space a fixed amount of times. 
+
+\paragraph{iii) Bayesian Optimisation} Lorem ipsum dolor sit amet consectetur adipiscing elit eleifend massa ut, hac odio viverra feugiat vestibulum libero vulputate suspendisse facilisis, quam class molestie platea mollis turpis sem varius duis.
+
+
+\subsubsection{Architecture Learning}
+Nevertheless, a number of approaches to automatically deriving suitable architectures has been proposed by a concept called 
+
 It is difficult to derive proper architecture. 
 What's the right number of hidden layers? What's the right number of hidden units per layer, etc? 
 Different approaches to architecture learning. Optimal Brain Surgeon/Damage. GridSearch, RandomSearch, Bayesian Optimisation.
-
-
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
 
 %\subsection{Challenges}
 %Computational complexity
@@ -322,7 +407,7 @@ Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspen
 %
 %Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
 
-\pagebreak
+
 \section{Counterfactual Inference}
 \subsection{Motivation}
 Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
