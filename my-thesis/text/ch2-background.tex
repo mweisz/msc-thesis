@@ -243,22 +243,86 @@ Today for many problems in machine learning, RNNs represent the state-of-the-art
 
 
 
-
-
-
 \subsection{Training}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+Training a neural network refers to the process of fitting the parameters of the model (i.e. the weights and bias for each cell) to the training data with respect to a given objective function. 
+
+\paragraph{Objective Function}
+\begin{wrapfigure}{r}{0.4\textwidth}
+	\centering
+	\includegraphics[width=0.4\textwidth]{figures/chapter-2/local-minima.png}
+	\caption{Local Minima}\label{fig:local-minima}   
+\end{wrapfigure}
+
+The objective function (also called \emph{loss function} or \emph{error function}) defines a metric of the performance of the model. It is the goal of the training procedure to appropriate parameters for the model that maximise the performance or minimise its loss respectively. 
+
+Figure \ref{fig:local-minima} illustrates this concept by depicting the graph of an objective function $f$ that takes a one-dimensional input (real numbered scalar). As we can see, the function posses multiple extreme values -- in particular one local minimum at $x = ?$% TODO add proper position
+and a global minimum at $x = ?$. % TODO add proper position. 
+
+
+In cases where an algebraically obtained closed-form solution for the minimum is not feasible or too computationally expensive, the minimum is often obtained by optimisation algorithms (see below). Since these algorithms often operate in a greedy manner, i.e. by a series of local operations that has no knowledge about the global surface of the function, we are facing the potential problem of only finding a local optimum but missing out the global one. As a consequence, it is desirable to use convex objective function that, by definition, only have one (global) minimum. 
+The actual loss function is dependent on the problem task and can be derived by a maximum likelihood estimation (MLE). For regression tasks, a common choice is the mean squared error between the prediction $\hat{Y}$ and the actual output value $Y$ defined as 
+
+
+\begin{align} 
+L_{MSE}(w,b) = \frac{1}{n} \sum_{i=1}^{n}(\hat{Y}_i - Y_i)^2.
+\end{align} 
+For (binary) classification problems we typically use the cross-entropy
+\begin{equation}
+	L_{CE}(w,b) = - \frac{1}{n} \sum_{i=1}^{n} (Y_i \log \hat{Y}_i + (1 - Y_i) \log 
+	(1- \hat{Y}_i)
+\end{equation}
+as loss function. 
+
+\paragraph{Gradient Descent} We typically make use of an optimisation algorithm that tries to minimise the output of our loss function that captures the degree to what extend our prediction differs from the target values. A widely used example is \emph{gradient descent} which is an iterative optimisation algorithm that can be used to find a minimum value of a function. This is achieved by repeatedly computing the gradient of the function at the current position and subtracting a proportion of the gradient from it until the gradient converges towards zero (which is the case at a minimum) or a stopping condition is satisfied. Intuitively, the subtraction of the gradient can be conceptualised by taking iterative steps towards the steepest descent until a minimum value is reached. 
+Formally, we are looking for $x = \text{argmin} f(x)$ by iteratively computing
+
+\begin{equation}	
+	\label{eq:gradient-descent-update}
+	x_{n+1} = x_n - \alpha \cdot \nabla f(x_n),
+\end{equation}
+where $x_i$ refers to our position at time iteration $i$ and $\alpha \in \mathbb{R}^+$ is a parameter called the \emph{learning rate} that defines the step size of our descent. Choosing an appropriate learning rate typically represents a trade-off between reducing the number of required iterations (high learning rate) and a making sure the function converges and does not overshoot the actual minimum $x^*$ or oscillates around it. Consequently, it is often desirable to use an \emph{adaptive learning rate} instead, i.e. making $\alpha: \mathbb{N} \rightarrow \mathbb{R}^+$ a function of the current iteration. 
+
+There two main types of gradient descent: \emph{batch gradient descent} computes the gradient for entire dataset before applying an update rule as defined in equation \ref{eq:gradient-descent-update} which is most exact but computationally expensive as it has to iterate through all $n$ data points in the dataset. In contrast, \emph{stochastic gradient descent} computes the gradient of a random (hence the name) sample and applies an update according to this sample alone which is less computationally expensive. The choice between the batch gradient descend and stochastic gradient descend therefore represents a trade-off between accuracy and computational costs. In addition to this dichotomy, there there exists a hybrid version called \emph{minibatch gradient descent} which computes the gradient on a batch which is a subset of the entire dataset. 
+
+\paragraph{Backpropagation} For gradient-based optimisation algorithms it is mandatory to compute the partial derivatives of the objective function $J$ with respect to any weight $w$ or bias $b$ in the neural network that needs to be learnt. In a deep neural network with multiple hidden layers this might seem rather complex as change of weights influences the outcome (and therefore the loss function) only indirectly by propagating its change through subsequent layers. 
+
+In the 1980s, X, Y, and Z % TODO Add history and contribution of backprop. Who invented it? When was it popularised? 
+introduced an efficient method to achieve this which they called the \emph{backpropagation algorithm}. The algorithm conceptualised the network as a concatenation of functions and is based on the simple idea of repeatedly applying the \emph{chain rule} as known in calculus to compute the partial derivatives with respect to each parameter (weights and biases) of interest. 
+
+ However, for neural networks computing the individual derivatives 
+
+\begin{enumerate}
+	\item What does training mean? What is the main principle? We want to learn parameters (weights+bias). 
+	\item Backpropagation. History, when was it discovered? How does it work on high-level? What does each pass do? 
+	\item Explain splits train, test, val
+	\item Equations... Formalisation
+	\item Challenges (symmetry, local optima, initialisation, complexity, memory)
+\end{enumerate}
+
+\subsection{Dropout}
+Lorem ipsum dolor sit amet consectetur, adipiscing elit senectus pretium, platea cras proin scelerisque.
 
 \subsection{Multi-Task Learning}
+Read chapter about multi-task learning! \\
 Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
 
-\subsection{Hyper-paramaters}
+\subsection{Architecture Learning and Hyper-Parameter Selection}
+It is difficult to derive proper architecture. 
+What's the right number of hidden layers? What's the right number of hidden units per layer, etc? 
+Different approaches to architecture learning. Optimal Brain Surgeon/Damage. GridSearch, RandomSearch, Bayesian Optimisation.
+
+
 Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
 
-\subsection{Challenges}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+%\subsection{Challenges}
+%Computational complexity
+%Lots of parameters (high memory)
+%Lots of hyper-parameters 
+%Low Understandability. Some people confuse softmax with confidence. 
+%
+%Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
 
-
+\pagebreak
 \section{Counterfactual Inference}
 \subsection{Motivation}
 Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
