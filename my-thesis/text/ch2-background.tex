@@ -407,23 +407,188 @@ Different approaches to architecture learning. Optimal Brain Surgeon/Damage. Gri
 %
 %Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
 
-
+\pagebreak
 \section{Counterfactual Inference}
+
 \subsection{Motivation}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+% TODO Check overlap with Introduction section
+The concept of causality represents the very foundation reasoning and logic. In many ways, all scientific research can be considered as an attempt to investigate the causal relations within different concepts in order to understand what \emph{cause of actions} leads to what \emph{effect}.
+
+Despite being of greatest importance, the study of causality is inherently difficult as since most phenomena are governed by a complex network of interdependencies and correlations making it almost impossible to identify pure causal relations such as $A \rightarrow B$.  
+
+In practice, causal inference is often performed in the scope of so called \emph{observational studies} that try to investigate the effect $Y$ a certain intervention or treatment $T$ has on a given context $X$. For instance, we consider a medical setting in which such a study might investigate how the blood pressure ($Y$) of a given patient ($X$) changes after being administered a medication ($T$) of interest.
+
+When considering causal relations within the data, we are often interested in answering \emph{counterfactual questions} such as "What would have happened if a different action had been taken?”. In order to understand the importance of such counterfactual questions, we have to introduce the concept of the \emph{individualised treatment effect} or ITE.
+
+The ITE is a quantity that is defined as the difference between the observed or \emph{factual outcome} and the unobserved or \emph{counterfactual outcome}. Intuitively, this means that the ITE tells us how the outcome would change depending on whether or not we perform % LANG is this the proper verb? 
+the intervention of interest. 
+As a consequence, if we had access to this quantity, we could immediately decide which outcome (treated or untreated) is closer to the desired effect. In our medical context mentioned above, having access to the ITE of a medication on a given patient would greatly aid them in their treatment planning. 
+
+Unfortunately, by its very definition it is infeasible to obtain the ITE: The observational study only gives us access to observed outcome -- the counterfactual outcome is never available. 
+% GRAPH Make graph pretty
+\begin{table}[]
+	\centering
+	\caption{Counterfactual Inference Example}
+	\label{tab:counterfactual-inference-motiviation}
+	\begin{tabular}{@{}lllll@{}}
+		\toprule
+		X & T & $Y^{(1)}$ (treated) & $Y^{(0)}$ (untreated) & ITE \\ \midrule
+		1 & 0 & ? & 100 & 100 - ? \\
+		2 & 1 & 110 & ? & 110 - ?  \\
+		3 & 1 & 98 & ? &  98 - ?  \\
+		4 & 0 & ? & 101 & 101 - ? \\
+		5 & 0 & ? & 107 &  107 - ? \\
+		6 & 1 & 99 & ? &  99 - ?\\ \bottomrule
+	\end{tabular}
+\end{table}
+
+Consider the example illustrated in table \ref{tab:counterfactual-inference-motiviation}. We are given a dataset of six subjects $X \in \{1, 2, 3, 4, 5, 6\}$ half of which received a treatment indicated by $T=1$ while the other half did not receive it, i.e. $T=0$. Depending on their treatment assignment, we can either directly observe the treated outcome $Y^{(1)}$ or the untreated outcome $Y^{(0)}$ but never both thus making it impossible to calculate the ITE. 
+
+
+As a consequence, the objective of \emph{counterfactual inference} is to \emph{estimate} the unobserved outcome which gives us a way to estimate the ITE and make an informed decision regarding the treatment assignment. 
+
+% TODO Rephrase as this overlaps with the intro!
+Finally, it can be said that the applications of counterfactual inference are ubiquitous and highly relevant to a variety of fields including treatment-planning in healthcare, policy-making for organisations, or even ad-placement for online platforms. As a consequence, research in this field can have a significant impact on a number of disciplines and potentially affect many people’s lives by helping important institutions, governments, and industries to make more informed decisions.
+
 
 \subsection{Formalisation}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+% TODO Check if it's okay that this is so similiar to previous paper
+% TODO cite Rubin 2011
+We represent each subject $i$ in our population  with a $d$-dimensional feature vector $X_i \in \mathcal{X}$, and two \emph{potential outcomes} $Y_{i}^{(1)}, Y_{i}^{(0)} \in \mathbb{R}$ which are drawn from a distribution
+\begin{equation}
+ (Y_{i}^{(1)}, Y_{i}^{(0)}) \mid X_i = x \sim \mathbb{P}(\cdot \mid X_i = x)
+ \end{equation}.
+  This way, the \emph{individualised treatment effect} for subject $i$ can be expressed as 
 
-\subsection{Counterfactual Inference vs. Supervised Learning}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+\begin{equation}
+T(x) = \mathbb{E}[Y_{i}^{(1)} - Y_{i}^{(0)} \mid X_i = x] . \label{eq:ite}
+\end{equation}
 
-\subsection{Propensity Score}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+Given this definition, the objective is to approximate the function $T(x)$ using an observational dataset $\mathcal{D}$ consisting of $n$ independent samples. 
 
-\subsection{Status Quo}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+Each sample is comprised of a tuple $ \langle X_i, W_i, Y_{i}^{(W_i)} \rangle$, where $X_i$ represents the subject's features, $W_i \in \{0,1\}$ the treatment assignment indicator, and $Y_{i}^{(W_i)}$ and $Y_{i}^{(1 - W_i)}$ the respective \emph{factual} and \emph{counterfactual} outcome. 
 
-\subsection{Open Questions}
-Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
+The treatment assignment (covered in detail in section \ref{sec:propensity-score}) is modelled as a random variable depending on the subjects' features, i.e. $W_i \not \perp X_i$. The assignment reflects a domain-specific policy which can be captured in terms of the probability $p(x) = \mathbb{P}(W_i = 1 \mid X_i = x)$ called the \emph{propensity score}.
+
+The objective of counterfactual inference is to fit a function to the observed way in order to estimate the individualised treatment effect. A variety of models and approaches has been proposed as discussed in detail in section \ref{sec:status-quo}.
+% TODO What about how to estimate the ITE?  
+
+
+\subsection{Counterfactual Inference vs. Supervised Learning} \label{sec:cfi-vs-supervised-learning}
+When fitting a function to estimate the ITE we could technically use any kind of model fitting approach. However, it is imperative to understand how the task of estimating the ITE using counterfactual inference is fundamentally different from a standard \emph{supervised learning problem} in machine learning.
+
+% GRAPH Create graph that illustrates the example
+\begin{wrapfigure}{r}{0.6\textwidth}
+	\centering
+	\includegraphics[width=0.6\textwidth]{figures/chapter-2/counterfactual-vs-supervised-learning.png}
+	\caption{Counterfactual Inference vs. Supervised Learning}\label{fig:counterfactual-inference-vs-supervised-learning}   
+\end{wrapfigure}
+
+
+The problem requires making inferences on a set of counterfactual samples using a set of factual
+samples. These two quantities, however, normally do not follow the same probability distribution. In fact, this would only be the case if the treatment was assigned randomly with an equal chance of $p = 0.5$ in which case we could actual treat the problem as a supervised learning problem.  In reality, the treatment assignment is not random but reflects particular domain-specific policy (see section \ref{sec:propensity-score}). 
+
+Consider the following example illustrated in figure \ref{fig:counterfactual-inference-vs-supervised-learning}: A doctor is treating patients with ... % TODO Write proper example that corresponds with figure
+%For example, one may be interested to know the consequences of smoking or the consequences of going to university. The people 'treated' are simply those—the smokers, or the university graduates—who in the course of everyday life undergo whatever it is that is being studied by the researcher. In both of these cases it is unfeasible (and perhaps unethical) to randomly assign people to smoking or a university education, so observational studies are required. The treatment effect estimated by simply comparing a particular outcome—rate of cancer or lifetime earnings—between those who smoked and did not smoke or attended university and did not attend university would be biased by any factors that predict smoking or university attendance, respectively. PSM attempts to control for these differences to make the groups receiving treatment and not-treatment more comparable. (WIKIPEDIA)
+
+Formally, we are inferring the outcomes over a counterfactual dataset $CF = \{(x_i, 1 - t_i) \}^{n}_{i=1}$ which is distributed according to some probability distribution $CF \sim P^{CF}$ using outcomes that were estimated over a factual dataset $F = \{(x_i, t_i) \}^{n}_{i=1}$ with $F \sim P^{F}$ where $P^{CF} \neq P^F$. We are a dealing with a \emph{covariate shift} which is often encountered in domain adaptation problems (Daume III , Marcu, 2006; Jiang, 2008; Mansour et al., 2009). %CITE appropriately
+
+Consequently, if we treated the treatment assignment as "just another feature" in our dataset, we might be introducing significant biases 
+Concluding, it can be said that when performing counterfactual inference, we have to take specific measures in order to ensure a meaningful estimation of the ITE. 
+
+
+\subsection{Treatment Assignment and Propensity Score} \label{sec:propensity-score}
+Whether or not a context receives the intervention typically depends on an underlying domain-specific policy. Such policies can be well-defined in terms of concrete conditions that have to be met (e.g. "$\text{patient age} < 45 \wedge \text{HIV} = \text{negative} \rightarrow \text{assign treatment}$") or can be less rigorous and reflect a decision maker's intuition or gut-feeling. In both cases, it is important to understand that -- even though we might not be able to comprehend the policy -- the decision is not made randomly but depends on the concrete features of the context or subject. 
+
+In the scope of counterfactual inference, we typically do not assume any kind of control or knowledge of the policy. Instead, we model a subject's inclination to receive the treatment as a random variable called \emph{propensity score} defined as 
+
+\begin{equation}
+p(x) = \mathbb{P}(W_i = 1 \mid X_i = x)
+\end{equation}
+ % TODO Check how much duplications are okay with formalisation part. 
+where $X_i$ denotes the subject's features and $W_i$ the treatment assignment with $W_i \not \perp X_i$ (the treatment assignment is not independent from the features). 
+
+While the propensity score is defined for each subject individually, we are sometimes also interested in the \emph{average propensity score} 
+
+% TODO Is this the same as average treatment assignment? 
+\begin{equation}
+	\mathbf{B} = \frac{1}{n} \cdot \sum \limits_{{i=1}}^{n}  \mathbb{P}(W_i = 1 \mid X_i)
+\end{equation}
+
+for a given dataset giving us an estimate of the selection bias of the policy. 
+
+\subsection{Estimating Treatment Effects} \label{sec:status-quo}
+% TODO Check out Ahmed's related work sections
+A number of different methods and models has been proposed in order to estimate treatment effects. 
+
+\paragraph{Propensity Score Matching} Early works have focused not on the individualised but on \emph{average treatment effect} or ATE defined the estimated value of all individualised treatment effects
+
+\begin{equation}
+\text{ATE} = \mathbb{E}[T(x)]
+\end{equation}
+over a population of interest using a method called \emph{propensity matching}. % CITE propensity matching (Rubin, 2011; Austin, 2011; Abadie & Imbens, 2016; Rosenbaum & Rubin, 1983; Rubin, 1973).
+
+This approach can be summarised as follows: First, we estimate the propensity scores of each subject in the dataset. This is achieved by training a classifier, typically logistic regression or random forests, on the dataset using the treatment assignment as target value that we want to predict. Secondly, we match each subject in the control group (i.e. the subset of untreated patients in the dataset) to one or more (e.g. by using k-Nearest-Neighbour) corresponding subjects in the treatment that most closely resemble the untreated subject. Finally, we are able to estimate  the average treatment effect by computing the average of the differences between the matched subjects. 
+ 
+% TODO Is this how it really works? 
+
+However, a number of challenges has been pointed out that there are a number of limitations and challenges for this approach. For instance, in a randomised trial (i.e. $p =0.5$) the propensity scores of any two subject will roughly equal while their features are significantly different resulting in misleading predictions. King (2016) % CITE Who?
+goes as far as saying that that propensity scores should not be used for matching at all. In addition, PSM only focuses on the average treatment affect and does not allow us to compute the more fine-grained ITE. 
+
+
+% Classical works have focused on estimating “aver- age” treatment effects through variants of propensity score matching (Rubin, 2011; Austin, 2011; Abadie & Imbens, 2016; Rosenbaum & Rubin, 1983; Rubin, 1973). More recent works tackled the problem of estimating “indi- vidualized” treatment effects using representation learn- ing (Johansson et al., 2016; Shalit et al., 2017), Bayesian inference (Hill, 2012), and standard supervised learning (Wager & Athey, 2015).
+%
+
+\paragraph{Direct Modelling}
+Despite the differences of counterfactual inference to supervised learning, it has been attempted model the ITE directly for instance using K-Neigherest-Neigbhour matching, or more recently using random forests (Wager  Athey, 2015) or neural networks that are treating the treatment assignment as a feature. % CITE . 
+One way to address the challenges described in section \ref{sec:cfi-vs-supervised-learning}, is to introduce a dedicated term in the objective function that tries to penalise the imbalance between the factual and counterfactual distributions.  
+
+
+\paragraph{Representation Learning}
+Most recently, deep neural networks have been applied to the problem of counterfactual inference resulting in promising first results. 
+
+One of current state-of-the-art methods treats the task as a problem in \emph{representation learning} (Sontag). % CITE Sontag
+Their approach is based on the concept of learning balanced representations for the treated and untreated subjects in the dataset such that the distribution of the factual and counterfactual outcomes is reduced. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/chapter-2/balanced-representations.png}
+	\caption{Learning Balanced Representation for Counterfactual Inference}\label{fig:balanced-representations}
+\end{figure}
+
+Concretely, they propose an architecture for feed-forward neural networks (illustrated in figure \ref{fig:balanced-representations-architecture}) in which the first $d_r$ hidden layers are responsible for learning a balanced representation $\Phi$ which is then processed in the remaining $d_o$ hidden outcome layers. 
+The imbalance of the representation is measured in terms of a function \emph{disc} while the outcome is optimised using the objective function 
+
+\begin{equation}
+	\text{loss}(h(\Phi, t), y) = \frac{1}{n}\sum_{i=1}^{n} \mid h(\Phi(x_i)), t_i), - y_i^{F} \mid
+\end{equation}
+
+that computes the absolute error between the prediction of the learnt hypothesis function $h$ on the inputs $x_i$ represented in terms of the learnt representation $\Phi$ and the actual (factual) outcome $y_i^F$. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/chapter-2/sontag-architecture.png}
+	\caption{Architecture for Balanced Representations}\label{fig:balanced-representations-architecture}
+\end{figure}
+
+Their method has achieved promising results and can be considered state-of-the-art. 
+
+
+\paragraph{Deep Neural Networks} 
+Despite the recent successes of deep neural networks in many other problem areas, only limited research has been done on using them for the task of causal inference. However, the previous example of representation learning, % SONTAG
+indicates promising first results and demonstrates that they can be highly suitable for the task beating existing statistical methods.
+ 
+%However, using deep neural networks introduces certain challenges for this task such as avoiding overfitting and 
+%
+%and represents a very recent area of research. A typical problem of neural networks is to 
+
+
+This thesis deals with the questions of how to improve the state-of-the-art in counterfactual inference using deep neural networks. In the following chapters, we propose a novel architecture for neural networks that conceptualises the problem as a multi-task learning problem, we introduce a propensity-based dropout scheme for regularisation, and propose an effective way to learn its model hyper-parameters. 
+
+
+%\subsection{Challenges}
+%How to improve accuracy? 
+%What are good architectures? 
+%How to train them? 
+%Dropout? 
 
