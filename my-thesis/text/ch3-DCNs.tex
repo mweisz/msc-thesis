@@ -104,7 +104,7 @@ The network is trained in two alternating phases. In each phase, we use either t
 	\includegraphics[width=0.6\textwidth]{figures/chapter-3/training-algorithm.png}
 	\caption{Training Algorithm}\label{fig:training-algorithm}
 \end{figure}
-The algorithm is outlined in listing \ref{fig:training-algorithm} and can be described as follows: We train the model byiterating over a total $K$ epochs. In the even epochs ($k \mod 2 = 0$), we use $\mathcal{D}^{(1)}$ to update the weights of the outcome-specific layers of the treated subjects, in the odd epochs ($k \mod 2 \neq 0$) we update the outcome-specific layers of the control subjects. 
+The algorithm is outlined in listing \ref{fig:training-algorithm} and can be described as follows: We train the model by iterating over a total $K$ epochs. In the even epochs ($k \mod 2 = 0$), we use $\mathcal{D}^{(1)}$ to update the weights of the outcome-specific layers of the treated subjects, in the odd epochs ($k \mod 2 \neq 0$) we update the outcome-specific layers of the control subjects. 
 
 \begin{figure}[h]
 	\centering
@@ -116,7 +116,7 @@ The algorithm is outlined in listing \ref{fig:training-algorithm} and can be des
 Note, how the weights of the shared layers are updated in every iteration. In order to update the weights, we are using the \emph{Adam optimiser} with \emph{Xavier initialisation}. % CITE Kingma & Ba
 % TODO Consider if I should make it more general (why Adama?)
 
-The deep counterfactual network is trained using the propensity-dropout (DP) described in the previous section and illustrated in figure \ref{fig:dcn-training} with $\lambda = 1$: The left-hand side depicts the training of a treated sample with a balanced propensity score, leading to only a few (if any) masked units, wheareas the right-hand side illustrates the training of an untreated sample with a high propensity score which is highly regularised in order to ensure a balanced representation and effective generalisation of the model. The alternating training can be conceptualised as an application of a deterministic dropout masking out every unit of the outcome-specific layers of the currently untrained outcome.
+The deep counterfactual network is trained using the propensity-dropout (DP) described in the previous section and illustrated in figure \ref{fig:dcn-training} with $\lambda = 1$: The left-hand side depicts the training of a treated sample with a balanced propensity score, leading to only a few (if any) masked units, whereas the right-hand side illustrates the training of an untreated sample with a high propensity score which is highly regularised in order to ensure a balanced representation and effective generalisation of the model. The alternating training can be conceptualised as an application of a deterministic dropout masking out every unit of the outcome-specific layers of the currently untrained outcome.
 
 
 
