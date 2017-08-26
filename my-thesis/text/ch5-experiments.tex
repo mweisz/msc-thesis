@@ -9,10 +9,32 @@
 
 %\minitoc
 
-\section{Deep Counterfactual Network}
+\section{Deep Counterfactual Networks}
+In chapter \ref{ch:3-DCNs} we introduced \emph{deep counterfactual networks} (DCN) with a propensity-based dropout scheme (PD) for the task of counterfactual inference. In the following, we will run a number of experiments on the model to evaluate its performance and compare it to a variety of baseline methods and existing competing approaches. 
+
+Firstly, we introduce the dataset that we are running the experiments on before describing the experimental setup in detail including the used hyper-parameters and relevant implementation details. Finally, we show the results of the experiments provide a discussion of the outcomes and its implications.  
+
 \subsection{Dataset}
+As described in section \ref{sec:counterfactual-inference}, due to the very nature of counterfactual inference we are never able to access the ground truth for the counterfactual outcomes for any observational dataset. This poses an enormous challenge when it comes to evaluating the performance of any model used for causal inference on real-world data. In order to deal with this issue, we follow (Hill) % CITE Hill, Johansson..
+and adopt a \emph{semi-synthetic} experimental setup for which we use the actual covariates and treatment assignments from the dataset but simulate the outcomes in order to have access to both the factual and the counterfactual outcomes. Nonetheless, it is important to note that the counterfactual outcome is only used for evaluation purposes and considered as unavailable during training time. 
+
+The experiments are conducted on the Infant Health and Development Program (IHDP) dataset that was introduced in (Hill, 2012). % CITE Hill
+ program that was carried out in the second half of the 1980s tried to aid premature infants at an early age to enhance their cognitive abilities measured in terms of the IQ score. The dataset consists of a total of 747 subjects out of which 139 were treated and 608 controlled. Each subject has 6 continuous and 19 binary features representing attributes of the child such as birth weight, sex, and weeks born pre-term, and relevant attributes of the mother measured around the time of giving birth (e.g. age, educational status, etc.). The outcome are simulated based on a functions that are described as "Response Surface B" setting in (Hill, 2012). % CITE HILL 2012
+ 
+ 
 
 \subsection{Experiment Setup}
+We are evaluating the performance of a \emph{deep counterfactual network} with \emph{propensity-dropout} which we will refer to as DCN-PD. In our experiment we are using an architecture with $L_s = 2, L_{i,0} =2 , L_{i,1} = 2$, thus $L_{\text{total}} = 4$ total layers, % IMPORTANT Do we consider the depth or the sum of layes as total? Shouldn't it be 6 instead?
+and utilise a fixed number of $h_s^{(l)} = h_{i,0}^{(l)} = h_{i,1}^{(l)} = 200$ hidden units for the $l^{th}$ layer in the network. We are using a ReLU activation function for our network and we evaluate the performance of the model in terms of the mean squared error (MSE)
+
+\begin{equation}
+	MSE = 
+\end{equation}
+
+ of the estimated individualised treatment effect.
+
+
+%We evaluate the performance of a DCN-PD model with Ls = 2,Li,1 = Li,2 = 1 (a total of 4 layers), and with 200 hidden units in all layers (ReLU activation), in terms of the mean squared error (MSE) of the estimated treatment ef- fect. We divide the IHDP data into a training set (80%) and an out-of-sample testing set (20%), and then evaluate the MSE on the testing sample in 100 different experiments, were in each experiment a new realization for the outcomes is drawn from the data generation model in (Hill, 2012). (We implemented the DCN-PD model in a Tensorflow environment.) The propensity network is implemented as a standard 2-layer feed-forward network with 25 hidden lay- ers, and is trained using the Adam optimizer.
 
 \subsection{Results}
 

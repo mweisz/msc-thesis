@@ -290,11 +290,17 @@ In the 1980s, X, Y, and Z % TODO Add history and contribution of backprop. Who i
 introduced an efficient method to achieve this which they called the \emph{backpropagation algorithm}. The algorithm conceptualised the network as a concatenation of functions and is based on the simple idea of repeatedly applying the \emph{chain rule} as known in calculus to compute the partial derivatives with respect to each parameter (weights and biases) of interest. 
 
 
-\begin{wrapfigure}{r}{0.4\textwidth}
-	\caption{Backpropagation}\label{fig:backpropagation}   
+% TODO Check what's wrong the the floating
+%\begin{wrapfigure}{r}{0.6\textwidth}
+%	\centering
+%	\includegraphics[width=0.6\textwidth]{figures/chapter-2/backpropagation.png}
+%		\caption{Backpropagation}\label{fig:backpropagation}   
+%\end{wrapfigure}
+\begin{figure}[h]
 	\centering
-	\includegraphics[height=0.6\textwidth]{figures/chapter-2/backpropagation.png}
-\end{wrapfigure}
+	\includegraphics[height=0.5\textwidth]{figures/chapter-2/backpropagation.png}
+	\caption{Backpropagation}\label{fig:backpropagation}   
+\end{figure}
 
 
 The training is then executed in two alternating phases as illustrated in figure \ref{fig:backpropagation}: In the \emph{forward pass} the inputs are propagated through the network from the input layer through the hidden layers until a predicted outcome $\hat{Y}$ is available in the output layer. Using the predicted outcome $\hat{Y}_i$, the actual outcome $Y_i$, and the loss function we are able to compute a loss \emph{l}.
@@ -407,8 +413,7 @@ Different approaches to architecture learning. Optimal Brain Surgeon/Damage. Gri
 %
 %Lorem ipsum dolor sit amet consectetur, adipiscing elit mus neque montes, suspendisse et sociis vestibulum.
 
-\pagebreak
-\section{Counterfactual Inference}
+\section{Counterfactual Inference} \label{sec:counterfactual-inference}
 
 \subsection{Motivation}
 % TODO Check overlap with Introduction section
