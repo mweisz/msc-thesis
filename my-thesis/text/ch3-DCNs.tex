@@ -77,7 +77,7 @@ where $\tilde{p}$ is the propensity score of subject $x$ as estimated by our \em
 refers to the entropy % CITE SHANNON
 known from information theory. 
 
-Consequently, a sample $x$ with an extreme propensity score ($\tilde{p}(x) = 0$ or $hat{p}(x) = 1$) receives a high dropout probability of $P_{\text{dropout}}(x) = 1 - \frac{\lambda}{2}$ (i.e. typically $0.5$), whereas samples with a balanced propensity score $hat{p}(x) = 0.5$ receive a low dropout probability $P_{\text{dropout}}(x) = \frac{1}{2} - \frac{\lambda}{2}$ (typically 0).
+Consequently, a sample $x$ with an extreme propensity score ($\tilde{p}(x) = 0$ or $hat{p}(x) = 1$) receives a high dropout probability of $P_{\text{dropout}}(x) = 1 - \frac{\lambda}{2}$ (i.e. typically $0.5$), whereas samples with a balanced propensity score $\hat{p}(x) = 0.5$ receive a low dropout probability $P_{\text{dropout}}(x) = \frac{1}{2} - \frac{\lambda}{2}$ (typically 0).
 
 Intuitively, we want our dropout scheme to mask out hidden units in a way that assigns "simple models" to subjects with very high ($p(x)$ close to $1$) or low  ($p(x)$ close to $1$) propensity scores, whereas we want to assign more "complex models" to subjects that have a balanced propensity score ($p(x)$ close to $0.5$). In other words, the dropout probability will be higher for subjects with potentially unreliable features that belong to an area of small treatment assignment overlap in the feature space. This way, we penalise training sample with extreme propensity scores in order to prevent the network from co-adapting with potentially unreliable samples, allowing the model to generalise better to the actual distribution of features.
 
@@ -96,7 +96,7 @@ In our model, a sample of $\tilde{T}(x)$  for a subject with features $x$ can be
 \end{flalign}
 where $\mathbf{w}_p^{(l)}, \mathbf{w}_s^{(l)}, \mathbf{w}_{i,0}^{(l)},$ and $\mathbf{w}_{i,1}^{(l)}$ refer to the weight matrices for the $l^{th}$ respective propensity, shared, or outcome-specific layer; $\mathbf{r}_s^{(l)}, \mathbf{r}_{i,0}^{(l)},$ and $\mathbf{r}_{i,1}^{(l)}$ correspond to the dropout masks, and $f: \mathbb{R} \rightarrow \mathbb{R}$ is an arbitrary activation function (e.g. a ReLU or the logistic function). 
 
-\section{Training the Model}
+\section{Training the Model} \label{sec:dcn-training}
 The network is trained in two alternating phases. In each phase, we use either the untreated samples $\mathcal{D}^{(0)}$ or the treated samples $\mathcal{D}^{(1)}$ as our training set to update the weights. 
 % TODO Replace with actual algorithm!!!
 \begin{figure}[h]
