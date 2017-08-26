@@ -21,14 +21,13 @@ and adopt a \emph{semi-synthetic} experimental setup for which we use the actual
 The experiments are conducted on the Infant Health and Development Program (IHDP) dataset that was introduced in (Hill, 2012). % CITE Hill
  program that was carried out in the second half of the 1980s tried to aid premature infants at an early age to enhance their cognitive abilities measured in terms of the IQ score. The dataset consists of a total of 747 subjects out of which 139 were treated and 608 controlled. Each subject has 6 continuous and 19 binary features representing attributes of the child such as birth weight, sex, and weeks born pre-term, and relevant attributes of the mother measured around the time of giving birth (e.g. age, educational status, etc.). The outcome are simulated based on a functions that are described as "Response Surface B" setting in (Hill, 2012). % CITE HILL 2012
  
- 
 
-\subsection{Experiment Setup}
+\subsection{Experiment Setup} \label{sec:pbd-experiment-setup}
 We are evaluating the performance of a \emph{deep counterfactual network} with \emph{propensity-dropout} which we will refer to as DCN-PD. In our experiment we are using an architecture with $L_s = 2, L_{i,0} =2 , L_{i,1} = 2$, thus $L_{\text{total}} = 4$ total layers, % IMPORTANT Do we consider the depth or the sum of layes as total? Shouldn't it be 6 instead?
 and utilise a fixed number of $h_s^{(l)} = h_{i,0}^{(l)} = h_{i,1}^{(l)} = 200$ hidden units for the $l^{th}$ layer in the network. We are using a ReLU activation function for our network and we evaluate the performance of the model in terms of the mean squared error (MSE)
 % EQUATION Make sure this is correct!
-\begin{equation} 
-	\mathcal{L}_\text{MSE} = \frac{1}{n}\sum_{i=1}^{n} (T(x) - \tilde{T}(x))^2 = \frac{1}{n}\sum_{i=1}^{n} ((Y_i^{(1)} - Y_i^{(0)}) - (\tilde{Y}_i^{(1)} - \tilde{Y}_i^{(0)}))^2
+\begin{equation} \label{eq:mse-ite}
+\text{MSE} = \frac{1}{n}\sum_{i=1}^{n} (T_i(x) - \tilde{T}_i(x))^2 = \frac{1}{n}\sum_{i=1}^{n} ((Y_i^{(1)} - Y_i^{(0)}) - (\tilde{Y}_i^{(1)} - \tilde{Y}_i^{(0)}))^2
 \end{equation}
  of the estimated treatment effect and the true treatment effect (as defined in equation \ref{eq:ite}).  
 
@@ -53,7 +52,7 @@ Firstly, we investigate the impact of our propensity-dropout scheme by comparing
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth]{figures/chapter-5/pd-boxplot.png}
+	\includegraphics[width=0.9\textwidth]{figures/chapter-5/pd-boxplot.png}
 	\caption{Comparison between the performance of a DCN with propensity-based dropout (right) and DCNs with regular dropout schemes (middle, left) in terms of the mean squared error (lower is better). The propensity-dropout has a regularising effect towards the selection bias and provides the model a higher degree of generalisation. }\label{fig:propensity-dropout-boxplot}
 \end{figure}
 
@@ -66,7 +65,7 @@ and balancing neural networks (BNN) (Johanson) % CITE JOhannson
 that we discussed in detail in section \ref{sec:representation-learning} and which represent the state-of-the-art for counterfactual inference. 
 In order to ensure a fair comparison, for the BNN and the NN-4 we are also using $4$ layers, each with $200$ hidden units trying to hold as many hyper-parameters as possible constant. The DCN uses regular dropout scheme with a dropout probability of $p=0.2$ and the DCN-PD is regularised using our propensity-based dropout.
 
-As we can see in table \ref{tab:dcn-pd-results}, the DCN-PD achieves the lowest MSE and outperforms the other methods. The BNN, representing  a strong benchmark as it effectively handles the selection bias by learning a balanced representation for the input features -- represents the most competitive alternative. Lastly, the performance gains that our DCN-PD achieves over a the NN-4 model suggest that the multi-task learning framework is an effective conception of counterfactual inference that outperforms direct modelling approaches which consider the treatment assignment as a regular input feature.   %TODO Should I mention that DCNs don't perform too wel? 
+As we can see in table \ref{tab:dcn-pd-results}, the DCN-PD achieves the lowest MSE and outperforms the other methods. The BNN, representing  a strong benchmark as it effectively handles the selection bias by learning a balanced representation for the input features, represents the most competitive alternative. Lastly, the performance gains that our DCN-PD achieves over a the NN-4 model suggest that the multi-task learning framework is an effective conception of counterfactual inference that outperforms direct modelling approaches which consider the treatment assignment as a regular input feature.   %TODO Should I mention that DCNs don't perform too wel? 
 
 Concluding, it can be said that our proposed model of deep counterfactual networks using propensity-dropout (DCN-PDs) represents a promising approach to using deep neural networks for counterfactual inference that it is able to compete with and potentially even outperform existing methods. 
 
@@ -89,15 +88,88 @@ Concluding, it can be said that our proposed model of deep counterfactual networ
 \end{table}
 
 
-\pagebreak
 \section{Architecture Learning for DCN}
-Lorem ipsum dolor sit amet consectetur adipiscing elit fringilla aliquam auctor quis, est congue rhoncus nisi vel class parturient consequat nam augue. Adipiscing nam nisi cras justo rutrum quis scelerisque inceptos sed venenatis, convallis ullamcorper cursus turpis tempor mi viverra luctus pharetra.
-\subsection{Dataset}
-\subsubsection{Synthetic}
+In chapter \ref{ch:4-DCN-LAs} we introduced an efficient approach to automatically infer an appropriate architecture for \emph{deep counterfactual networks} (DCN) without the need for computationally expensive hyper-parameter optimisation (e.g. grid search, random search, or bayesian optimisation). 
+
+In the following, we will run a number of experiments to investigate the performance of the model with the inferred architecture. In particular, we investigate how the different characteristics (selection bias, shared complexity, and outcome-specific complexity) that we defined in section \ref{sec:relevant-characteristics} influence the learnt architecture and the performance of the model. 
+
+Firstly, we introduce a purely synthetic dataset that gives us full control over the relevant characteristics, and a real-world dataset for which the characteristics have to be inferred according to our approach. Thereafter, we describe the experimental setup in detail including the used hyper-parameters and relevant implementation details before showing the results of the experiments and concluding with a discussion of the outcomes and its implications.  
+
+
+\subsection{Datasets}
+\subsubsection{Synthetic Model}
+For the synthetic model, we draw $n = 1000$ samples in the form of a tuple $\langle X_i, W_i, Y_i \rangle$ for each subject $i$. Each $X_i = (x_{i,0}, x_{i,1}, \ldots, x_{i,24})$ consists of $d = 25$ covariates for each subject which are independently drawn from a uniform distribution, i.e.  
+
+$$
+x_{i,0}, x_{i,1}, \ldots, x_{i,24} \overset{iid}{\sim} \mathcal{U}(0, 1)
+$$
+keeping each covariate strictly non-negative. For the treatment assignment indicator $W_i \in \{0,1\}$, we define
+
+$$
+\tilde{p}(X_i) =  \frac{1}{1 + exp(- \alpha\sum \limits_{{x_{j} \in X_i}} x_j)} % \mathbb{P}(W_i = 1 \mid X_i = x) =
+$$
+$$
+W_i \sim Bernoulli(\tilde{p}(X_i))
+$$
+where $\tilde{p}(X_i)$ represents the subject's propensity score and the parameter $\alpha \in \mathbb{R}_{\geq0}$ gives us a way to control the imbalance between the treated and untreated subjects. For $\alpha = 0$, we get $\tilde{p}(X_i) = 0.5$ corresponding to a maximum balance between the number of treated and untreated subjects whereas an increasing alpha shifts the distribution towards a higher proportion of treated subjects.
+% TOTO Which quantity does it correspond to
+We compute both outcomes $Y^{(0)}, Y^{(1)} \in \mathbb{R}$ as
+$$
+Y^{(0)}_i = f_0(X_i) + \mathcal{N}(0, 1)
+$$
+$$
+Y^{(1)}_i = f_1(X_i) + \mathcal{N}(0, 1)
+$$
+which are governed by their corresponding outcome functions $f_0$ and $f_1$ defined as
+
+
+$$
+f_1(X_i) = \sum \limits_{{x_{j} \in X_i}} \lambda^{(1)}_j x_j +  \beta^{(1)} \cdot exp(\sum \limits_{{x_{j} \in X_i}} \mu^{(1)}_j x_j^2)
+$$
+
+$$
+f_0(X_i) = \sum \limits_{{x_{j} \in X_i}} \lambda^{(0)}_j x_j +  \beta^{(0)} \cdot exp(\sum \limits_{{x_{j} \in X_i}} \mu^{(0)}_j x_j).
+$$
+
+Each outcome function consists of a linear part governed by the coefficients in the vectors $\lambda^{(0)}$ and $\lambda^{(1)}$ respectively, and an outcome-specific polynomial part inside the exponential function governed by the coefficients in the vectors $\mu^{(0)}$ and $\mu^{(1)}$. In the case of $f_1$ this is a quadratic function whereas for $f_0$ we are using a linear function. The parameters $\beta^{(0)}, \beta^{(1)} \in \mathbb{R}^0$ let us control the weight of the outcome-specific polynomial part in comparison to the common linear part. \\
+% TODO Add A, B annotation for the different parts in the equation
+% TODO Continue here. In the worst case, don't spend too much time thinking about the meaning. Come back to this later but for now just write the formula for drawing lambda and kappa. 
+
+The vectors $\lambda^{(1)}, \mu^{(1)}$ for the treated outcome function $f_1$ are drawn based on the data generation process designated as the "Response Surface B" setting in (Hill, 2012). For the outcome function $f_0$ of untreated subjects, we draw the vectors $\lambda^{(0)}, \mu^{(0)}$ from a normal distribution centred around their corresponding treated counterpart, i.e.    
+%TODO Cite Hill
+
+
+$$\lambda^{(0)}_i \sim \mathcal{N}(\lambda^{(1)}_i, \sigma)  \hspace{1cm} \mu^{(0)}_i \sim \mathcal{N}(\mu^{(1)}_i, \sigma),
+$$
+with a standard deviation $\sigma$. This way, we can use the parameter $\sigma \in \mathbb{R}^0$ to control the similarity between the two outcome surfaces. 
+Finally, we can set $Y_i = W_i \cdot Y^{(1)}_i + (1 - W_i) \cdot Y^{(0)}_i$ representing our \emph{factual outcome} for subject $i$. The other (i.e. counterfactual) outcome is not used in the training set but needed later for evaluation purposes. \\
+
+In summary, we receive a synthetic model which is parametrised by $\alpha$, $\beta^{(0)}$, $\beta^{(1)}$, and $\sigma$ each corresponding directly to a different characteristic we are interested in. The parameter $\alpha$ defines the skewness of the treatment assignment (i.e. the portion of treated vs. untreated subjects) and corresponds to $\mathbf{B}$,  $\beta^{(0)}$ and $\beta^{(1)}$ define the emphasis of the outcome-specific parts of the equation in relation to their common linear part and correlate with $\mathbf{C_0}, \mathbf{C_1}$, and $\sigma$ determines the overall similarity between the two outcome surfaces directly corresponding to $\mathbf{S}$. 
+
+% TODO Mention the similarities between the synthetic model and the empirical model
+
+% TODO Add UNOS
 \subsubsection{UNOS}
+To be added... 
 
 \subsection{Experiment Setup}
+The experiments are conducted in a setting similar to the ones described in section \ref{sec:pbd-experiment-setup}. For instance, this means using ReLU activation functions, utilising 200 hidden units per layer, and considering the MSE over estimated treatment effect (see equation \ref{eq:mse-ite})as our evaluation metric. 
 
-\subsection{Results}
+The main difference is that we are not assuming any specific values for the numbers of layers $L_s, L_{i,0},$ and $L_{i,1}$ as it is our very objective to automatically learn an appropriate architecture for our model by exploiting inferred characteristics of the dataset. For the sake of fairness and  comparability with the competing models, we limit the total number of layers in the network to $L_{\text{total}} = 4$. 
 
-\subsection{Conclusions}
+The synthetic and the UNOS dataset are each split into a training set comprising 80\% of the data and a test set with the remaining 20\%. We run a total of $N_E = 100$ experiments, each time drawing new outcomes according to the data generation models in the previous sections
+and report the average MSE across all experiments, each time evaluated exclusively on the out-of-sample test set. 
+
+%For the \emph{propensity network} (see \ref{sec:multi-task-learning}) that is used to estimate the propensity scores for each subject, we used $L_p = 2$ layers with $h_p^{(l)}) = 25$ hidden units per layer, trained using an Adam optimiser % CITE ADAM 
+%and Xavier initialisation. % CITE XAVIER
+%The propensity-dropout is applied as described in section \ref{sec:propensity-based-dropout} and uses $\lambda = 1$. 
+
+\subsection{Results and Discussion}
+
+
+
+
+
+
+
+
