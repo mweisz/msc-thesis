@@ -59,33 +59,39 @@ Firstly, we investigate the impact of our propensity-dropout scheme by comparing
 
 As we can observe in the figure, our propensity-based dropout scheme provides a significant improvement over the alternative DCNs for which the  dropout probabilities are uniform throughout all samples in the training set. The result implies that the propensity-based dropout helps the DCN to generalise better to the true feature distribution when trained with an biased dataset such as IHDP (139 treated vs. 608 controlled subjects). Consequently, this suggest that propensity-dropout can be an effective regulariser for the task of counterfactual inference. 
 
-In the following, we will look at the performance of DCNs and DCN-PDs in comparison to baseline methods and existing competing approaches. Table \ref{tab:dcn-pd-results} shows the 
+In the following, we will look at the performance of a DCN and DCN-PD in comparison to competing state-of-the-art methods shown in table \ref{tab:dcn-pd-results}. Concretely, we compare the mean MSE (aggregated over $N_E = 100$ experiments) that is achieved by our models to the MSE of k-Nearest-Neighbour matching (k-NN), Causal Forests with double-sample tree (WagerAthey, 2015), % CITE Wager Athey
+a classical feed-forward neural network with the treatment assignemnt as input feature (NN-4),
+Bayesian Additive Regression Trees (BART) (Chipman) % CITE CHipman, Hill
+and balancing neural networks (BNN) (Johanson) % CITE JOhannson
+that we discussed in detail in section \ref{sec:representation-learning} and which represent the state-of-the-art for counterfactual inference. 
+In order to ensure a fair comparison, for the BNN and the NN-4 we are also using $4$ layers, each with $200$ hidden units trying to hold as many hyper-parameters as possible constant. The DCN uses regular dropout scheme with a dropout probability of $p=0.2$ and the DCN-PD is regularised using our propensity-based dropout.
 
+As we can see in table \ref{tab:dcn-pd-results}, the DCN-PD achieves the lowest MSE and outperforms the other methods. The BNN, representing  a strong benchmark as it effectively handles the selection bias by learning a balanced representation for the input features -- represents the most competitive alternative. Lastly, the performance gains that our DCN-PD achieves over a the NN-4 model suggest that the multi-task learning framework is an effective conception of counterfactual inference that outperforms direct modelling approaches which consider the treatment assignment as a regular input feature.   %TODO Should I mention that DCNs don't perform too wel? 
+
+Concluding, it can be said that our proposed model of deep counterfactual networks using propensity-dropout (DCN-PDs) represents a promising approach to using deep neural networks for counterfactual inference that it is able to compete with and potentially even outperform existing methods. 
+
+% TODO Mention criticm ? 
 
 \begin{table}[]
 	\centering
 	\begin{tabular}{@{}cc@{}}
 		\toprule
-		\textbf{Algorithm} & \textbf{MSE}   \\ \midrule
-		k-NN               &   $5.30 \pm 0.30$ \\
-		Causal Forest      &   $3.86 \pm 0.20$              \\
+		\textbf{Algorithm} & \textbf{MSE}                \\ \midrule
+		k-NN               &   $5.30 \pm 0.30$           \\
+		Causal Forest      &   $3.86 \pm 0.20$           \\
 		BART               &   $3.50 \pm 0.20$           \\ 
 		BNN                &   $2.45 \pm 0.10$           \\
 		NN-4                &  $2.88 \pm 0.10$           \\
 		DCN                &   $2.58 \pm 0.06$           \\
 		DCN-PD             &   $2.05 \pm 0.03$          \\\bottomrule
 	\end{tabular}
-	\caption{Performance of Deep Counterfactual Networks (DCN) and Deep Counterfactual Networks with Propensity-Dropout (DCN-DP) in comparision with baseline methods and existing competing approaches}\label{tab:dcn-pd-results}
+	\caption{Performance of Deep Counterfactual Networks (DCN) and Deep Counterfactual Networks with Propensity-Dropout (DCN-DP) in comparison with baseline methods and existing competing approaches}\label{tab:dcn-pd-results}
 \end{table}
 
 
-
- In order to assess the marginalby the proposed multitask model when combined with the propensity-dropout scheme, we compare the perfor- mance of DCN-PD with other state-of-the-art models in Table 1. In particular, we compare the MSE (av- eraged over 100 experiments) achieved by the DCN- PD with those achieved by k nearest neighbor match- ing (k-NN), Causal Forests with double-sample trees (WagerAthey, 2015), Bayesian Additive Regression Trees (BART) (Chipman et al., 2010; Hill, 2012), and Bal- ancing neural networks (BNN) (Johansson et al., 2016). (For BNNs, we use 4 layers with 200 hidden units per layer to ensure a fair comparison.) We also provide a direct com- parison with a standard single-output feed-forward neural network (with 4-layers and 200 hidden units per layer) that treats the treatment assignment as an input feature (NN-4), and a DCN with a standard dropout with a probability of 0.2. As we can see in Table 1, DCN-PD outperforms all the other models, with the BNN model being the most compet- itive. (BNN is a strong benchmark as it handles the selec- tion by learning a “balanced representation” for the input features (Johansson et al., 2016).) DCN-PDs significantlyperformance gain achievedMean Square Error (MSE)Dropout probability
-%Deep Counterfactual Networks outperforms the NN-4 benchmark, which suggests that the multitask modeling framework is a more appropriate con- ception of causal inference compared to direct modeling by assuming that the treatment assignment is an input feature.
-
-
-
+\pagebreak
 \section{Architecture Learning for DCN}
+Lorem ipsum dolor sit amet consectetur adipiscing elit fringilla aliquam auctor quis, est congue rhoncus nisi vel class parturient consequat nam augue. Adipiscing nam nisi cras justo rutrum quis scelerisque inceptos sed venenatis, convallis ullamcorper cursus turpis tempor mi viverra luctus pharetra.
 \subsection{Dataset}
 \subsubsection{Synthetic}
 \subsubsection{UNOS}
