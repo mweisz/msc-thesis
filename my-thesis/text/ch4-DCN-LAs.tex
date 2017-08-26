@@ -40,7 +40,7 @@ The approach is based on the observation that certain architectures are more sui
 In the following, we will discuss each characteristic in detail, including its intuition and formalisation. We describe how the characteristic can be inferred from the data and how it can be used to inform the architecture of the DCN.
 
 
-\subsection{Relevant Characteristics}
+\subsection{Relevant Characteristics} \label{sec:relevant-characteristics}
 For the problem of counterfactual inference, we have identified the following main characteristics of the data. 
 
 \subsubsection{(a) Selection Bias}
@@ -93,18 +93,49 @@ In order to formalise the outcome-specific complexity, we use the same model for
 % CRITICAL How do I learn this? 
 
 \subsection{Empirical Model} \label{sec:empirical-model}
-Lorem ipsum dolor sit amet consectetur adipiscing elit pretium vel, sodales est praesent hac dictumst porta ac turpis blandit, ultrices nunc vehicula pulvinar nec id eu dignissim. Semper vulputate ridiculus egestas inceptos eleifend condimentum blandit conubia rhoncus lacinia, dui congue neque duis sodales phasellus euismod nisi convallis, proin tortor elementum amet viverra molestie dictum ante a. Felis eu sagittis ridiculus lectus leo sociosqu accumsan, posuere vestibulum ad sapien fringilla rutrum condimentum praesent, purus habitasse elementum habitant mi dictum.
+Our approach is based on the observation that -- depending on the characteristics defined above -- the best-performing architectures consistently express certain empirical ratios for the different numbers of layers. This way, we can create a model $\mathcal{F}$ with 
+
+\begin{equation}
+\mathcal{F}(\mathbf{B}, \mathbf{S}, \mathbf{C_0}, \mathbf{C_1}) = \tilde{\mathbf{R}} = \begin{bmatrix}
+\tilde{R_{s}} \\
+\tilde{R_{i,0}} \\
+\tilde{R_{i,1}}
+\end{bmatrix} 
+\end{equation}
+
+that takes as input the different characteristics and outputs a vector $\tilde{\mathbf{R}}$ that contains the estimated appropriate ratios 
+
+\begin{align} 
+\tilde{R_{s}} = \frac{L_{s}}{L_{\text{total}}} && \tilde{R_{i,0}} = \frac{R_{i,0}}{L_{\text{total}}} && \tilde{R_{i,1}} =\frac{R_{i,1}}{L_{\text{total}}}
+\end{align} 
+between the respective layers and the total number of layers $L_{\text{total}}$. 
+
+We train the model using  synthetically-generated datasets (see section ??) % TODO Add reference to data generation
+for which we have full control over the different characteristics and use hyper-parameter optimisation such as grid-search over the set of different distributions of a fixed amount of layers to find the best-performing ratios which we then use as our target label. 
+
 
 \subsection{Architecture Learning Algorithm}
 Having defined and formalised the relevant characteristics of the dataset, we can derive a suitable DCN architecture for a new dataset as described in algorithm \ref{fig:algorithm}. 
 
-First, we estimate the characteristics $\mathbf{B}$, $\mathbf{S}$, $\mathbf{C_0}, \mathbf{C_1}$ of the dataset, as described in the previous section (i.e. by training separate neural networks to estimate the average propensity score and the respective properties (similarity and individual complexity) of the two response surfaces). 
+First, we estimate the characteristics $\mathbf{B}$, $\mathbf{S}$, $\mathbf{C_0}, \mathbf{C_1}$ of the dataset, as described in section  \ref{sec:relevant-characteristics} (i.e. by training separate neural networks to estimate the average propensity score and the respective properties (similarity and individual complexity) of the two response surfaces). 
 
-The estimated characteristics $\tilde{\mathbf{B}}$, $\tilde{\mathbf{S}}$, $\tilde{\mathbf{C_0}}, \tilde{\mathbf{C_1}}$ are then used as input features for our empirical model (see previous section) that was derived a priori from a hyper-parameter optimisation over large parametrised synthetic datasets. This way, we can profit from the empirically optimal ratios and are able to directly estimate an appropriate architecture for our dataset $\mathcal{D}$. 
+The estimated characteristics $\tilde{\mathbf{B}}$, $\tilde{\mathbf{S}}$, $\tilde{\mathbf{C_0}}, \tilde{\mathbf{C_1}}$ are then used as input features for our empirical model (see previous section) that was derived a priori from a hyper-parameter optimisation over a synthetic dataset. Since we cannot be sure that we receive $\tilde{R_{s}} + \tilde{R_{i,0}} + \tilde{R_{i,1}} = 1 $, we are running a \emph{softmax function} $\sigma$ which is defined as  
+
+\begin{equation}
+\sigma(\mathbf{x})_i = \frac{e^{\mathbf{x}_i}}{\sum_{k=1}^{K}e^{\mathbf{x}_k}}
+\end{equation}
+
+where $\mathbf{x}$ is a $K$-dimensional vector and $i = 1, 2, \dots, K$ on the output vector $\tilde{\mathbf{R}}$ to normalise the estimated ratios making sure they add up to $1$. 
+
+%TODO SHould I mention that we need to multiply them now with the desired number of layers to get 
+
+
+Using our approach, we can profit from the empirically suitable ratios and are able to directly estimate an appropriate architecture for our dataset $\mathcal{D}$ without the need for hyper-parameter optimisation.  
 
 %We will refer to the \emph{deep counterfactual network} whose architecture we learned using our approach as \emph{DCN-LA}. It is trained  analogously to a traditional DCN as described in section \ref{sec:dcn-training}. 
 
 
+% GRAPH Update the algorithm accordingly to reflect empirial model and vector R
 \begin{algorithm}
 	\caption{Architecture Learning}\label{fig:algorithm}
 	\begin{algorithmic}[1]
