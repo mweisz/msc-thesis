@@ -151,7 +151,13 @@ In summary, we receive a synthetic model which is parametrised by $\alpha$, $\be
 
 % TODO Add UNOS
 \subsubsection{UNOS}
-Lorem ipsum dolor sit amet consectetur adipiscing elit, sagittis id ultrices neque iaculis. Posuere vitae turpis tristique viverra himenaeos commodo euismod maecenas, magnis est urna placerat purus dolor arcu class mauris, eros metus adipiscing convallis lobortis ullamcorper justo. Tellus sem fringilla tristique elementum aliquet diam ac vestibulum nullam, volutpat nam lacinia ullamcorper turpis etiam nulla parturient ornare, sed magna egestas lorem sapien sodales imperdiet libero. Ipsum augue hac fusce ac semper feugiat proin aptent duis, consequat at leo facilisis posuere suscipit himenaeos gravida. Tempus nostra non lacus vivamus nunc mattis, nascetur semper platea cursus est.
+In addition to the fully synthetic dataset above, we also conduct the experiments on a real-world dataset in order to see how well our model generalises beyond synthetic data. For this purpose we are using the United Network for Organ Sharing (UNOS) heart transplant dataset  
+that contains information about patients who underwent a herat transplantation during the years 1987 -- 2015 (Cecka 1996).% CITE CECKA (Jinsung Paper)
+
+Since we are dealing with the task of causal inference we are once again faced with the problem of not being able to access the ground-truth counterfactual outcomes. Therefore, we are adopting the semi-synthetic setting where we use the original covariates and the treatment assignment from the dataset but model the outcomes according to the "Response Surface B" setting described in (Hill, 2012). % CITE HILL 2012
+
+%Experiments were conducted using the UNOS database for patients who underwent a heart transplant over the years from 1987 to 2015 (Cecka 1996). We use the “Thoracic DATA” dataset in the UNOS database as our root dataset. In this dataset, all patients were followed-up until death, i.e. the post-transplant survival times for all patients are avail- able in the dataset. Of the 148,512 patients in the “Thoracic DATA” who underwent either heart or lung transplant, we extract 60,516 patients who underwent a heart transplant. Of the 60,516 patients who underwent a heart transplant, we exclude 3,800 patients (6.28%) who are still alive (right- censored), and we only use the 56,716 patients for whom we have the exact survival (lifetime) information.
+
 
 \subsection{Experiment Setup}
 The experiments are conducted in a setting similar to the ones described in section \ref{sec:pbd-experiment-setup}. For instance, this means using ReLU activation functions, utilising 200 hidden units per layer, and considering the MSE over estimated treatment effect (see equation \ref{eq:mse-ite})as our evaluation metric. 
@@ -245,18 +251,22 @@ The differences between the learnt architectures for $\mathbf{C}_0$ and $\mathbf
 
 
 \subsubsection{UNOS}
-As we can see in table \ref{tab:dcn-la-results}, the DCN-PD achieves the lowest MSE and outperforms the other methods. The BNN, representing  a strong benchmark as it effectively handles the selection bias by learning a balanced representation for the input features, represents the most competitive alternative. Lastly, the performance gains that our DCN-PD achieves over a the NN-4 model suggest that the multi-task learning framework is an effective conception of counterfactual inference that outperforms direct modelling approaches which consider the treatment assignment as a regular input feature.
+For the UNOS dataset we compare the performance of a DCN-LA, i.e. a DCN whose architecture was learnt according to our empirical model, to a standard DCN (see chapter \ref{ch:3-DCNs}), a feed-forward neural network with $4$ layers (NN-4), and a k-nearest-neighbour (k-NN) baseline approach.  
 
+As we can see in table \ref{tab:dcn-la-results}, the DCN-LA achieves the lowest MSE outperforming the other methods. However, it has to be noted that the gain of the DCN-LA over the default DCN is only marginal. This might be due to the fact that the estimated characteristics, $\mathbf{B}, \mathbf{S}, \mathbf{C_0}, \mathbf{C_1}$ % TODO Should I provide concrete values? 
+were relatively balanced reducing the potential of the method to learn a distinctive architecture. Nevertheless, the result implies that the approach of automatically deriving an appropriate architecture for a DCN can also be effectively applied to real-world dataset. 
+%
+%The BNN, representing  a strong benchmark as it effectively handles the selection bias by learning a balanced representation for the input features, represents the most competitive alternative. Lastly, the performance gains that our DCN-PD achieves over a the NN-4 model suggest that the multi-task learning framework is an effective conception of counterfactual inference that outperforms direct modelling approaches which consider the treatment assignment as a regular input feature.
 
 \begin{table}[h]
 	\centering
 	\begin{tabular}{@{}cc@{}}
 		\toprule
 		\textbf{Algorithm} & \textbf{MSE}                \\ \midrule
-		k-NN               &   $5.30 \pm 0.30$           \\
-		NN-4                &  $2.88 \pm 0.10$           \\
-		DCN                &   $2.58 \pm 0.06$           \\
-		DCN-LA             &   $2.05 \pm 0.03$          \\\bottomrule
+		k-NN               &   $4.24 \pm 0.32$           \\
+		NN-4                &  $3.19 \pm 0.16$           \\
+		DCN                &   $2.63 \pm 0.08$           \\
+		DCN-LA             &   $2.55 \pm 0.11$          \\\bottomrule
 	\end{tabular}
 	\caption{Performance of Deep Counterfactual Networks (DCN) and Deep Counterfactual Networks with Propensity-Dropout (DCN-DP) in comparison with baseline methods and existing competing approaches}\label{tab:dcn-la-results}
 \end{table}
