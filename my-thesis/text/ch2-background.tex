@@ -8,104 +8,118 @@
 \chapter{\label{ch:2-background}Theoretical Background} 
 
 %\minitoc
+\section{Introduction}  
+This chapter introduces the relevant background for our project and its related work. 
+We start by providing an introduction to the field of machine learning, its terminology, and core concepts such as model definitions, objective functions, training methods, and regularisation. The second part of the chapter deals with the specifics of \emph{deep learning} which is a  subfield of machine learning that utilises a certain class of models called \emph{deep neural networks}. We outline different types of neural networks and their respective topologies before discussing concepts like multi-task learning and dropout. The final part of the chapter is dedicated to the problem of counterfactual inference. We motivate the importance of the task and its application areas, and provide a formalisation. Furthermore, we outline the challenges of the problem and different existing approaches that have been applied to it so far. 
 
-\section{Introduction}
-This chapter describes the theoretical background of machine learning and counterfactual inference including their formalisation, core concepts, state-of-the-art, and challenges. 
-
-We start by giving a general introduction to machine learning and  its core concepts. 
-
-The second part of the chapter deals with  \emph{deep learning} -- a particular subset of machine learning that uses deep neural networks. 
-
-The last part of the chapter is dedicated to the problem of counterfactual inference. We describe the importance of the problem and its application areas, and give a formalisation. Furthermore, we outline the challenges of the problem and the different approaches that have been applied to it so far. We conclude, by relating counterfactual inference to deep learning and describing its open research questions which is the very foundation of this thesis. 
-
-% TODO Intro: Write introduction in more detail depending on the actual contents. 
-
+%We conclude by relating counterfactual inference to deep learning and describing its open research questions which is the very foundation of this thesis. 
 
 \section{Machine Learning}
 
-
 \subsection{Motivation}
-When conceptualising computer programs, we often think of them as series of unambiguous, (mostly) atomic instructions that are executed in a deterministic way and have to be explicitly programmed by a human programmer. 
+When conceptualising computer programs, we often think of them as series of discrete, unambiguous, sequential instructions that are executed in a deterministic way and have to be explicitly programmed by a human programmer. 
 
-While certain problem areas -- in particular those for which a well-defined algorithm or effective step-by-step solution strategy exists -- can successfully expressed and ultimately solved this way, there are various problems where this seems infeasible. A typical example for the second category is autonomous driving for which there are far too many situations and eventualities to encode the desired behaviour of an autonomous vehicle as a finite sequence of conditional instructions. 
+Many problems --- in particular those for which a well-defined algorithm or effective step-by-step solution strategy exists --- can be successfully expressed and ultimately solved this way. 
 
-Machine learning is a subfield of computer science that deals with the question of how to teach computer programs to learn without being explicitly programmed what to do. 
-% TODO Check if this it too close to the quote at wikipedia 
+Nonetheless, there are domains where this algorithmic approach seems infeasible. A typical example is autonomous driving for which there are almost infinitely many possible situations to consider making it impossible to encode the desired behaviour of an autonomous vehicle as a finite sequence of instructions. 
 
-More formally, an algorithm "is said to learn from experience E with respect to some class of tasks T and performance measure P if its performance at tasks in T, as measured by P, improves with experience E". (Mitchell)
-% CITE:  Mitchell, T. (1997). Machine Learning. McGraw Hill. p. 2. ISBN 0-07-042807-7.
-Recalling our example of autonomous driving, for instance, we could define the task $T$ in terms of "moving the car from A to B" while our performance measure $P$ might include aspects such as the travel time and the number of people or objects harmed. The experience $E$ would consists of the \emph{training data} that is acquired by previously covered distances (either autonomously or by "observing" a human driver). 
+One potential way to approach these kinds of problems is by using a concept called \emph{machine learning} which is a subfield of computer science that deals with the question of how to teach computer programs to learn to perform a task without being explicitly programmed how to do it. 
+% PLAG? Check if this it too close to the quote at wikipedia 
+
+More formally, a common definition of machine learning suggests that an algorithm "is said to learn from experience E with respect to some class of tasks T and performance measure P if its performance at tasks in T, as measured by P, improves with experience E." \cite{ml-definition}
+% PLAG?
+
+Transferred to our example of autonomous driving, we could define the task $T$ in terms of "moving the car from an origin A to a destination B" while our performance measure $P$ might include aspects such as the travel time the number of damaged objects or harmed humans. The experience $E$ would represent so called \emph{training data} that is acquired by previously covered distances (either autonomously or by recording the actions of a human driver). 
 
 % TODO Show diagram (model, algorithm, learning, data)
 
 \subsection{Types of Learning}
-Machine Learning is typically categorised into \emph{supervised learning}, \emph{unsupervised learning}, \emph{reinforcement learning}. 
-
-% TODO For each of the categories, make it more formal 
+Machine Learning is typically categorised into three main categories which are briefly outlined in the following. 
 
 \subsubsection{Supervised Learning} 
-In supervised learning the task is to infer a function over a number of samples from a set of training data that is said to be \emph{labelled}. In other words, for each sample in the training data, we have access to the actual function value we want to predict. 
+In a supervised learning setting, the task is to infer a function from a number of samples from a training dataset that is said to be \emph{labelled}. In other words, for each sample in the training data, we have access to the actual function value we want to predict while training the model. 
 
-For instance, we might be interested predicting housing prices where we are given a dataset consisting of historic information regarding houses (e.g. number of rooms, area in $m^2$, etc.), commonly referred  to as \emph{features} or \emph{covariates}, and the actual price for which the house has been sold, called \emph{outcome}, \emph{target}, or \emph{label}. Once a certain model has been trained by using the historic labelled dataset, we can use the same model to predict the housing prices on unseen data points, i.e. new houses for which the price is unknown. Such a task of predicting a continuous variable is called a \emph{regression} task whereas the predicting of a discrete output is referred to as a \emph{classification} task. 
+For instance, we might be interested in predicting housing prices where we are given a dataset consisting of information regarding different properties (e.g. the number of rooms and the area in $m^2$), commonly referred  to as \emph{features} or \emph{covariates}, and the actual price for which the house has been sold, called \emph{outcome}, \emph{target}, or \emph{label}. 
+
+Once the \emph{model has been trained} --- i.e. we have found the parameters of an appropriate function that best describes the historic dataset --- we can use the same model to predict the housing prices for unseen data points. 
+
+Such a task of predicting a continuous variable is often referred to as a \emph{regression problem} whereas the prediction of a discrete output is called a \emph{classification problem}. 
 
 \subsubsection{Unsupervised Learning} 
-In contrast to supervised learning, the training set in an unsupervised setting does not contain the target labels. Typical tasks in this field include finding particular patterns in the data and clustering it accordingly. It is important to note, however, that for supervised learning, there is normally no ground-truth meaning that the performance (or quality) of the outcome cannot be easily be measure or even defined in absolute terms but might depend on the underlying use-case of the clustering. Another important task in supervised learning is \emph{dimensionality reduction} for which a (in terms of the features) high-dimensional dataset is reduces to a target lower dimension while trying to minimise the information loss. 
+In contrast to supervised learning, the training set of an unsupervised learning problem does not contain the target labels. Typical tasks in this setting include inferring structural patterns from the data and \emph{clustering }it accordingly. 
+
+It is important to note that for supervised learning, there is normally no concept of an underlying \emph{ground-truth} that we are trying to predict. In other words, the performance (or quality) of the outcome typically cannot be measured or defined in absolute terms but depends on the domain-specific use-case of the clustering. 
+
+Another important task in unsupervised learning is \emph{dimensionality reduction} for which a high-dimensional dataset is reduced to a target lower dimension while simultaneously trying to minimise the information loss. 
 
 \subsubsection{Reinforcement Learning}
-In reinforcement learning, a software agent has to learn appropriate actions in a dynamic environment in which the consequences of an action might not be immediately accessible but add up to a long-term reward that ought to be maximised. 
+In reinforcement learning, a software agent has to learn a sequence of appropriate actions in a dynamic environment in which the consequences of an action might not be immediately accessible but accumulate to a long-term reward that ought to be maximised. \cite{reinforcement-learning}
 
-A most prominent example was mentioned earlier with the task of autonomous driving in which a vehicle is governed by a piece of software that has to find adequate series of actions (steering, regulating speed, etc.) in order to reach a target destination in a complex and ever-changing environment. 
+A most prominent example was mentioned earlier with the task of autonomous driving in which a vehicle is governed by a piece of software that has to find an adequate series of actions (i.e. steering and regulating speed) in order to reach a target destination in a complex and dynamically changing environment. 
 
-
-% TODO! Re-create graph!
-\begin{figure}[]
+\subsection{Machine Learning Models}
+% GRAPH Re-create graph!
+\begin{figure}[h]
 	\caption{Schematic Approach of Machine Learning. A selected model $M$ is trained on a dataset $D$ using a learning algorithm $A$.} \label{fig:machine-learning-approach}
 	\centering
 	\includegraphics[width=0.5\textwidth]{figures/chapter-2/machine-learning-approach.png}
-\end{figure}
-\subsection{Machine Learning Models}
-As illustrated in figure \ref{fig:machine-learning-approach}, machine learning is based on the concept of selecting an appropriate model and fitting it to a given (training) data set using a training algorithm. 
+\end{figure} 
 
-For instance, we might want to use a \emph{linear model} for our task of predicting housing prices. We can then make use \emph{linear regression} which allows us to fit our linear model to our labelled dataset of existing houses and their prices. 
- 
-The selection of an appropriate model is of great importance and determines important factors such as the trade-off between the expressiveness (i.e. the ability to capture complex relationships) and the computational complexity of our model (i.e. how difficult it is to train it). 
+Machine learning is based on the concept of selecting an appropriate model and fitting it to a given (training) data set using a training algorithm illustrated in figure \ref{fig:machine-learning-approach}. 
 
-There is a number of models each with individual pros and cons depending on the desired task and the desired characteristics. Typical models include \emph{linear models}, \emph{decision trees}, and \emph{neural networks}. 
+For instance, we might want to use a \emph{linear model} $f$ for our task of predicting housing prices
+\begin{equation}
+f_{\mathbf{w}, b}(\mathbf{x}) = \mathbf{w}\cdot \mathbf{x} + b,
+\end{equation}
+where $\mathbf{x}$ corresponds to the input vector containing the features of the house, and $\mathbf{w}, b$ represent the parameters of our linear model commonly referred to as \emph{weights} and \emph{bias}. We can then make use \emph{linear regression} to fit our linear model to our labelled dataset of existing houses and their prices. 
+
+The selection of an appropriate model is of great importance and determines factors such as the trade-off between the expressiveness or \emph{variance} of the model (i.e. its ability to capture complex relationships) and its potential to generalise to unseen data points. Additionally,  computational considerations such as time and space complexity of the model and its training process have to be taken into account. 
+
+Consequently, the selection of an appropriate model typically depends on the task, the training datasets, and its characteristics. Typical alternatives to the linear model include \emph{support vector machines}, \emph{decision trees}, and \emph{neural networks}. 
 % TODO What are other typical models. How do they compare against each other? 
 % Should I sketch them out here? 
 
 This dissertation focuses on using \emph{deep learning} for the problem of counterfactual inference. Therefore, a dedicated part of this chapter deals exclusively with deep neural networks and describes their characteristics in more detail. 
 
 
+\subsection{Variance, Bias, and Regularisation} \label{sec:regularisation}
+\begin{figure}[]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/chapter-2/overfitting-underfitting.png}
+	\caption{Visualisation of Bias variance Tradeoff. The model on the left is ... whereas the middle one ... and the right one is ...}	\label{fig:overfitting-underfitting}
+\end{figure}
+When training our model we have to find the right balance between fitting it most accurately to the training data while making sure that it still generalises well to unseen data points. This consideration is commonly referred to as \emph{trade-off between bias and variance},  illustrated in figure \ref{fig:overfitting-underfitting}. 
 
-%\subsection{Training}
-%Machine learning is based on the concept of training a selected model by using a 
-%
-%Typically: Gradient Descent
-%
-%
-%What types are there? 
-%What's the challenge? (local minimum, symmetries, etc.)
-%% TODO Include graph
+The model on the left tries to fit a straight line to a dataset which expresses polynomial properties resulting in a poor approximation often referred to as \emph{underfitting}. We might say the model has a high \emph{bias} and is therefore too simple to accurately describe the relationship in the data. 
 
-\subsection{Regularisation} \label{sec:regularisation}
-When training our model we have to find the right balance between fitting it most accurately to the training data while making sure that the model generalises will for unseen data points. 
-Given that the expressiveness of the model is sufficiently high to capture it, we might naively fit our model to the training data perfectly, resulting in a training error of zero. This, however, would merely "memorise" the training data and might perform poorly on unseen future data points. This phenomenon where we overfit the training data is often referred to as \emph{high variance}. 
-In contrast, if the model is too simple, we night not be able to accurately capture the relationship in our data leading to equally poor results. In this case, we are under-fitting the data and our model has a so called \emph{high bias}.
-Therefore, the goal is to train the model in a way that neither overfits nor underfits and generalises well to unseen datapoints. This can be achieved by a concept called \emph{regulariation}.
+In contrast, the model on the right uses high-order polynomial features and is able to perfectly fit the data resulting in a training error of zero. This, however, is typically not desired as we would merely "memorise" the training data and perform poorly on any unseen future data points. In other words, we are \emph{overfitting} the training dataset because of a \emph{high variance}.  
+
+Consequently, the objective is to train a model that neither overfits nor underfits the training data and generalises well to unseen datapoints ( illustrated by the model in the middle). 
+
+The most common approach to achieve this is by selecting a model which is likely to have a sufficient variance to capture the complexity of the data (thus avoiding underfitting) and then making use of a concept called \emph{regularisation} to avoid overfitting. 
+
+Regularisation can be achieved by introducing a \emph{regularisation term} in the objective function that imposes a penalty for learning models that are too complex. Consider the terms 
+\begin{align} 
+R_{l1}(\mathbf{w}) = \sum_{i=1}^{d}  \lvert \mathbf{w}_i \lvert  && \text{and} &&R_{l2}(\mathbf{w}) = \sum_{i=1}^{d}  \mathbf{w}_i^2,
+\end{align} 
+
+where $d$ refers to the dimension of the weights parameter $\mathbf{w}$, that both penalise the sum of the weights (in terms of the absolute value or as a quadratic function, respectively). This way, we ensure that the model learns the parameters in a way that only attaches high weights to highly predictive features since their gain has to outweigh the penalty imposed by the regularisation term. 
+ 
+We will cover the concept of regularisation in more detail in section \ref{sec:dropout} for neural networks as they represent the class of models that this thesis is focus on. 
+
+
+%When using a complex model with a high variance, we might naively fit our model to the training data perfectly, resulting in a training error of zero. This, however, would merely "memorise" the training data and might perform poorly on unseen future data points. This phenomenon where we overfit the training data is often referred to as \emph{high variance}. 
+%In contrast, if the model is too simple, we night not be able to accurately capture the relationship in our data leading to equally poor results. In this case, we are under-fitting the data and our model has a so called \emph{high bias}.
+%
+%
+
 
 % TODO Add formula for objective functions with L1 and L2 regularisation
 
 % TODO Regularistion is actually just for avoiding overfitting!   
 
-% TODO! Re-create graph!
-\begin{figure}[]
-	\label{fig:overfitting-underfitting}
+% GRAPH Re-create graph!
 
-	\centering
-	\includegraphics[width=0.8\textwidth]{figures/chapter-2/overfitting-underfitting.png}
-	\caption{Visualisation of Bias variance Tradeoff. The model on the left is ... whereas the middle one ... and the right one is ...}
-\end{figure}
 
 % TODO Should I include learning curves as well? 
 %% TODO! Re-create graph!
@@ -322,7 +336,7 @@ The backpropagation algorithm therefore represents an effective mean to compute 
 %	\item Challenges (symmetry, local optima, initialisation, complexity, memory)
 %\end{enumerate}
 
-\subsection{Dropout}
+\subsection{Dropout} \label{sec:dropout}
 As described in section \ref{sec:regularisation}, regularisation is an important concept in machine learning in order to avoid overfitting the training data. While in theory, a traditional approaches like \emph{l1} (lasso) and \emph{l2} (weight-decay) are possible, a number of different regularisation techniques have been proposed that are specific to the mechanics of neural networks. 
 
 One of the most-used approaches is called \emph{dropout} and was proposed by % CITE Hinton
