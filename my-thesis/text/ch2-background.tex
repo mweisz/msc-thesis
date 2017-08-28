@@ -306,10 +306,9 @@ The backpropagation algorithm therefore represents an effective technique to com
 
 
 \subsection{Dropout} \label{sec:dropout}
-As described in section \ref{sec:regularisation}, regularisation is an important concept in machine learning in order to avoid overfitting the training data. While in theory, a traditional approaches like \emph{l1} (lasso) and \emph{l2} (weight-decay) are possible, a number of different regularisation techniques have been proposed that are specific to the mechanics of neural networks. 
+As described in section \ref{sec:regularisation}, regularisation is an important concept in machine learning in order to avoid overfitting the training data. While in theory, a traditional approach like \emph{l1} (lasso) and \emph{l2} (weight-decay) regularisation are conceivable, a number of regularisation techniques have been proposed that are specific to the mechanics of neural networks. 
 
-One of the most-used approaches is called \emph{dropout} and was proposed by % CITE Hinton
-in 2014. The basic idea is that during training every neuron is kept active only with a certain probability $p$. With a probability of $1-p$ it represents an output of zero otherwise. Intuitively, this prevents the network from becoming too dependent on a particular neuron as it is forced to learn an alternative representation when it is disabled. As a consequence, the network learns a representation that generalises better giving dropout a regularising influence on the network. Similar to the regularisation hyper-paremeter $\lambda$ described in \ref{sec:regularisation}, the dropout probablity $p$ represents a hyper-parameter that has to be chosen appropriately.
+One of the most-used approaches is called \emph{dropout} and was proposed by \citedate{dropout} in 2014. The basic idea is that during training every neuron is kept active only with a certain probability $p$. Conversely, with a probability of $1-p$ it is masked out and represents an output of zero. Intuitively, this prevents the network from becoming too dependent on a particular neuron as it is forced to learn an alternative representation when the neuron is disabled. As a consequence, the network learns a representation that generalises better giving dropout a regularising influence on the network. Similar to the regularisation hyper-parameter $\lambda$ described earlier, the dropout probability $p$ represents a hyper-parameter that has to be chosen appropriately.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.8\textwidth]{figures/chapter-2/dropout.png}
@@ -317,26 +316,25 @@ in 2014. The basic idea is that during training every neuron is kept active only
 \end{figure}
 
 
-% TODO Consider Dropconnect! Should I also include this? 
-
-
-Figure \ref{fig:dropout} illustrates this concept: The original network (right side) is thinned out by the dropout resulting in the network on the right side. 
+Figure \ref{fig:dropout} illustrates this the concept of dropout: The original network (left side) is thinned out by the dropout resulting in the network on the right side. 
 
 Today, dropout represents the de-facto standard for regularising neural networks and preventing them from overfitting. 
 
 
 \subsection{Multi-Task Learning}
 Neural networks are typically used to perform a single task that is formalised by minimising an appropriate objective function. However, sometimes it is desirable to train the network on multiple (related) tasks simultaneously. 
+
+% GRAPH Cite Hinton % CITE Sebastian Ruder
 \begin{wrapfigure}{r}{0.4\textwidth}
 	\caption{Multi-Task Learning}\label{fig:multitask-learning}   
 	\centering
 	\includegraphics[width=0.4\textwidth]{figures/chapter-2/multitask-learning.png}
 \end{wrapfigure}
-As illustrated in figure \ref{fig:multitask-learning}, such a multi-task neural network is characterised by a number of layers that are shared among all tasks and a number of layers that are task-specific. Each task typically provides its own objective function which is optimised jointly with the objective functions of the other tasks. 
-Multi-task learning can have a variety of desirable properties: Firstly, multi-task neural networks are typically less prone to overfitting as the shared layers have a regularising effect on the network forcing it to learn a shared representation among all tasks. In addition, they allow influencing the way a task is learnt on a more fine-grained level by introducing inductive biases that are provided by the other tasks. This means that we can make a primary task more inclined towards considering related sub-tasks. 
-% CITE Inductive bias
+As illustrated in figure \ref{fig:multitask-learning}, such a multi-task neural network is characterised by a number of layers that are shared between all tasks and a number of layers that are task-specific. Each task typically provides its own objective function which is optimised jointly with the objective functions of the other tasks. 
 
-As typical example for multi-task learning, we consider training a spam classifier for emails. Different users might have different distributions over the features of emails they receive due to factors such as language, contacts, age, and interests which can be conceptualised as a number of different tasks. Despite their differences these tasks are highly related allowing us to treat the classifier as a multitask-learning problem. Ideally, the shared layers would learn common concepts of the characteristics of spam emails whereas the individual task-specific layers would take into account the specific characteristics of the user. 
+Multi-task learning can have a variety of desirable properties: Firstly, multi-task neural networks are typically less prone to overfitting as the shared layers have a regularising effect on the network forcing it to learn a shared representation among all tasks. Moreover, they allow influencing the way a task is learnt on a fine-grained level by introducing inductive biases \cite{inductive-bias} that are provided by the other tasks. This means that we can make a primary task more inclined towards considering related sub-tasks. 
+
+As an example for multi-task learning, we consider training a spam classifier for emails. Different users might have distinct distributions over the features of emails they receive due to factors such as language, age, and their interests. Therefore, we can conceptualise the individual classifiers as a number of different tasks. Despite their differences these tasks are highly related allowing us to treat the classifier as a multitask-learning problem. Ideally, the shared layers would learn common concepts of the characteristics of spam emails whereas the individual task-specific layers would take into account the specific characteristics of the user. 
 
 % ... "Bias-free learning is impossible; much of the power of an inductive learner follows directly from the power of its inductive bias [Mitchell 1980]."
 
@@ -346,47 +344,38 @@ As typical example for multi-task learning, we consider training a spam classifi
 
 
 
-\subsection{Model Selection and Architecture Learning} % TODO Is this the right expression? 
-In section \ref{sec:nn-types} we described the three main types of neural networks which are each suitable for different kinds of tasks. However, even after deciding on a specific type, there are a number of architectural choices that are of great importance for the performance of the model. These architectural choices can be considered as model-level hyper-parameters that are typically defined a-priori and have to be chosen appropriately in addition to the hyper-parameters that were already discussed in the previous sections (e.g. learning rate $\alpha$, dropout probability $p$, activation function $f$, etc.). These following lists typical model-level hyper-parameters and how they might affect the network. 
+\subsection{Model Selection and Architecture Learning} 
+In section \ref{sec:nn-types} we introduced the main types of neural networks, each suitable for different kinds of tasks. However, even after selecting a specific type, there are still a number of architectural considerations that influence the performance of the model. These considerations represent model-level hyper-parameters that are normally defined a-priori and have to be chosen in addition to the hyper-parameters that we already discussed in the previous sections (i.e. the learning rate $\alpha$, the dropout probability $p$, and the type of activation function $\phi$). The following lists such model-level hyper-parameters and how they might affect the network. 
 
 \subsubsection{Model Hyperparameters}
-\paragraph{i) Number of layers} The number of layers (or depth) of the network is a key design decision for the model's architecture and greatly influences its performance. In general, a higher number of layer results in a more complex model with high variance increasing its expressiveness and ability to capture complex non-linear dependencies. On the flip side, % TODO Can I say this? 
-this leads to an increased probability of over-fitting the training data and therefore requires stronger regularisation. From a practical perspective, a higher number of layers will cause the training to more computationally expensive and requires more memory to store the trained parameters. Consequently, the choice reflects the classical tradeoff between bias and variance discussed in \ref{sec:regularisation} and depends on the amount of available data and computational resources. 
+\paragraph{i) Number of layers} The number of layers (or \emph{depth}) of the network is a key design decision for the model's architecture and greatly influences its performance. In general, a greater number of layer results in a more complex model with higher variance increasing its ability to capture complex non-linear dependencies. On the flip side, % TODO Can I say this? 
+it also increases the risk of  over-fitting the training data and therefore requires stronger regularisation. From a practical perspective, a higher number of layers also causes the model to be more computationally expensive and require a larger memory to store the trained parameters. 
 
-%| Number of Hidden Layers | Result |
-%
-%0 - Only capable of representing linear separable functions or decisions.
-%
-%1 - Can approximate any function that contains a continuous mapping
-%from one finite space to another.
-%
-%2 - Can represent an arbitrary decision boundary to arbitrary accuracy
-%with rational activation functions and can approximate any smooth
-%mapping to any accuracy.
-% TODO Point out that 2-4 layers almost always sufficient!
-% TODO Should I include sample number and heuristics? 
-% CITE some paper...
+Consequently, the number of layers corresponds to the classical trade-off between bias and variance discussed in section \ref{sec:regularisation} and thus depends on the amount of available data, the degree of regularisation, and computational considerations. 
 
-\paragraph{ii) Number of units per layer} In addition to the number of hidden layers, we need to decide on an appropriate number of units per hidden layer (network width). The decision follows a rationale similar to the number of layers: A high number of units per layer increase the variance of the model allowing it to accommodate more complex functions at the cost of more computational complexity and the danger of over-fitting.  
+
+\paragraph{ii) Number of units per layer} In addition to the number of hidden layers, we need to decide on an appropriate number of units per hidden layer (network \emph{width}). The decision follows a similar rationale to the number of layers: A high number of units per layer increases the variance of the model allowing it to accommodate more complexity while increasing the risk of over-fitting.  
 
 
 \subsubsection{Hyper-Parameter Optimisation}
-In contrast to the ordinary parameters (weights and biases) of the model, hyper-parameters are typically not learnt during training but need to be chosen appropriate a-priori. However, there are three main techniques to derive suitable hyper-parameters:
+In contrast to ordinary parameters (i.e. weights and biases) of the model, hyper-parameters are typically not learnt during training but need to be chosen a-priori. However, there are three main techniques for deriving suitable hyper-parameters:
 
-\paragraph{i) Grid Search} The most basic form of finding appropriate hyper-parameters is to perform a \emph{grid search}. This means iteratively trying out a set of candidate values for each hyper-parameter and thereby exhaustively searching the space of potential hyper-parameters. After each iteration, the model is trained and then evaluated on a dedicated \emph{cross validation set}. % TODO Make sure I mention the splits somewheher!
-While this approach is doable for a small space search space, it becomes computationally infeasible if the potential hyper-parameters (or their combinations) is large. 
+\paragraph{i) Grid Search} The most basic form of finding appropriate hyper-parameters is to perform a \emph{grid search}. This means iteratively trying a set of candidate values for each hyper-parameter leading to an exhausting search over the space of potential hyper-parameters. After each iteration, the model is trained and then evaluated on a dedicated \emph{cross validation set} which is a subset of the entire dataset disjoint from the training and test set. The set of hyper-parameters with the maximum performance is ultimately chosen for the model.   
+While this approach is feasible for a small search space, it becomes computationally challenging if the space of potential hyper-parameters is large. 
 
-\paragraph{ii) Random Search} An alternative to grid search that is computationally less expensive is \emph{random search}. Instead of trying every possible hyper-parameter in the search space exhaustively, this approach randomly samples hyper-parameters from the search space a fixed amount of times. 
+\paragraph{ii) Random Search} An alternative to grid search that is computationally less expensive is \emph{random search}: Instead of trying every possible hyper-parameter in the search space exhaustively, this approach randomly samples hyper-parameters from the search space a fixed amount of times. 
 
-\paragraph{iii) Bayesian Optimisation} Lorem ipsum dolor sit amet consectetur adipiscing elit eleifend massa ut, hac odio viverra feugiat vestibulum libero vulputate suspendisse facilisis, quam class molestie platea mollis turpis sem varius duis.
+\paragraph{iii) Bayesian Optimisation} Bayesian optimisation \cite{bayesian-optimisation} of hyper-parameters uses \emph{Gaussian processes} (GPs) to map a distribution over the hyper-parameters to an (initially unknown) objective function of our model that we want to optimise. We are trying to evaluate the search space of hyper-parameters in a way, that provides the maximum insight about the objective function and its potential minimum.  This is achieved by using concepts of Bayesian inference, i.e. obtaining a \emph{posterior probability} by updating our previous beliefs (\emph{prior}) with evidence following \emph{Bayes' Rule}. 
+
+In practice, it has been shown that Bayesian optimisation has the potential to outperform competing approaches (such as grid search) while requiring a fewer number of iterations \cite{bayesian-optimisation-results}. Nevertheless, due to the curse of dimensionality, in most settings the process is still considered computationally expensive. 
 
 
-\subsubsection{Architecture Learning}
-Nevertheless, a number of approaches to automatically deriving suitable architectures has been proposed by a concept called 
-
-It is difficult to derive proper architecture. 
-What's the right number of hidden layers? What's the right number of hidden units per layer, etc? 
-Different approaches to architecture learning. Optimal Brain Surgeon/Damage. GridSearch, RandomSearch, Bayesian Optimisation.
+%\subsubsection{Architecture Learning}
+%Nevertheless, a number of approaches to automatically deriving suitable architectures has been proposed by a concept called 
+%
+%It is difficult to derive proper architecture. 
+%What's the right number of hidden layers? What's the right number of hidden units per layer, etc? 
+%Different approaches to architecture learning. Optimal Brain Surgeon/Damage. GridSearch, RandomSearch, Bayesian Optimisation.
 
 %\subsection{Challenges}
 %Computational complexity
@@ -400,19 +389,19 @@ Different approaches to architecture learning. Optimal Brain Surgeon/Damage. Gri
 
 \subsection{Motivation}
 % TODO Check overlap with Introduction section
-The concept of causality represents the very foundation reasoning and logic. In many ways, all scientific research can be considered as an attempt to investigate the causal relations within different concepts in order to understand what \emph{cause of actions} leads to what \emph{effect}.
+The concept of causality represents the foundation of disciplines such as reasoning and logic. To some extent, most scientific research can be considered as an attempt to investigate the causal relations within different concepts in order to understand what \emph{cause of actions} results in  what \emph{effect}.
 
-Despite being of greatest importance, the study of causality is inherently difficult as since most phenomena are governed by a complex network of interdependencies and correlations making it almost impossible to identify pure causal relations such as $A \rightarrow B$.  
+Despite its importance, the study of causality is inherently difficult since most phenomena are governed by a complex network of interdependencies and correlations making it almost impossible to identify pure causal relations such as $A \rightarrow B$.  
 
-In practice, causal inference is often performed in the scope of so called \emph{observational studies} that try to investigate the effect $Y$ a certain intervention or treatment $T$ has on a given context $X$. For instance, we consider a medical setting in which such a study might investigate how the blood pressure ($Y$) of a given patient ($X$) changes after being administered a medication ($T$) of interest.
+In practice, causal inference is often performed in the scope of observational studies that try to investigate the effect $Y$ a certain intervention or treatment $T$ has on a given context $X$. For instance, we consider a medical setting in which such a study investigates how the blood pressure ($Y$) of a given patient ($X$) changes after being administered a medication ($T$) of interest.
 
 When considering causal relations within the data, we are often interested in answering \emph{counterfactual questions} such as "What would have happened if a different action had been taken?”. In order to understand the importance of such counterfactual questions, we have to introduce the concept of the \emph{individualised treatment effect} or ITE.
 
 The ITE is a quantity that is defined as the difference between the observed or \emph{factual outcome} and the unobserved or \emph{counterfactual outcome}. Intuitively, this means that the ITE tells us how the outcome would change depending on whether or not we perform % LANG is this the proper verb? 
 the intervention of interest. 
-As a consequence, if we had access to this quantity, we could immediately decide which outcome (treated or untreated) is closer to the desired effect. In our medical context mentioned above, having access to the ITE of a medication on a given patient would greatly aid them in their treatment planning. 
+As a consequence, if we had access to this quantity, we could immediately decide which outcome (treated or untreated) is closer to the desired effect. In our medical context mentioned above, having access to the ITE of a medication on a given patient would be a crucial benefit during treatment planning. 
 
-Unfortunately, by its very definition it is infeasible to obtain the ITE: The observational study only gives us access to observed outcome -- the counterfactual outcome is never available. 
+Unfortunately, by its very definition it is infeasible to obtain the ITE for any real-world dataset: An observational study can only give us access to the observed outcome -- the counterfactual outcome is never available. 
 % GRAPH Make graph pretty
 \begin{table}[]
 	\centering
@@ -430,23 +419,22 @@ Unfortunately, by its very definition it is infeasible to obtain the ITE: The ob
 	\end{tabular}
 \end{table}
 
-Consider the example illustrated in table \ref{tab:counterfactual-inference-motiviation}. We are given a dataset of six subjects $X \in \{1, 2, 3, 4, 5, 6\}$ half of which received a treatment indicated by $T=1$ while the other half did not receive it, i.e. $T=0$. Depending on their treatment assignment, we can either directly observe the treated outcome $Y^{(1)}$ or the untreated outcome $Y^{(0)}$ but never both thus making it impossible to calculate the ITE. 
+Consider the example illustrated in table \ref{tab:counterfactual-inference-motiviation}. We are given a dataset of six subjects $X \in \{1, 2, 3, 4, 5, 6\}$ half of which received a treatment indicated by $T=1$ while the other half did not receive it (i.e. $T=0$). Depending on their treatment assignment, we can either directly observe the treated outcome $Y^{(1)}$ or the untreated outcome $Y^{(0)}$ but never both, making it impossible to calculate the ITE. 
 
 
-As a consequence, the objective of \emph{counterfactual inference} is to \emph{estimate} the unobserved outcome which gives us a way to estimate the ITE and make an informed decision regarding the treatment assignment. 
+As a consequence, the objective of counterfactual inference is to \emph{estimate} the unobserved outcome which allows us to estimate the ITE, helping us make informed decisions regarding the treatment assignment. 
 
 % TODO Rephrase as this overlaps with the intro!
-Finally, it can be said that the applications of counterfactual inference are ubiquitous and highly relevant to a variety of fields including treatment-planning in healthcare, policy-making for organisations, or even ad-placement for online platforms. As a consequence, research in this field can have a significant impact on a number of disciplines and potentially affect many people’s lives by helping important institutions, governments, and industries to make more informed decisions.
+Finally, it can be said that the applications of counterfactual inference are ubiquitous and highly relevant to a variety of fields including treatment-planning in healthcare, policy-making for organisations, and even ad-placement for online platforms. 
+%As a consequence, research in this field can have a significant impact on a number of disciplines and potentially affect many people’s lives by helping important institutions, governments, and industries to make more informed decisions.
 
 
 \subsection{Formalisation}
-% TODO Check if it's okay that this is so similiar to previous paper
-% TODO cite Rubin 2011
-We represent each subject $i$ in our population  with a $d$-dimensional feature vector $X_i \in \mathcal{X}$, and two \emph{potential outcomes} $Y_{i}^{(1)}, Y_{i}^{(0)} \in \mathbb{R}$ which are drawn from a distribution
+We represent each subject $i$ in our population  with a $d$-dimensional feature vector $X_i \in \mathcal{X}$, and two \emph{potential outcomes} $Y_{i}^{(1)}, Y_{i}^{(0)} \in \mathbb{R}$ (following \cite{potential-outcomes}) which are drawn from a distribution
 \begin{equation}
  (Y_{i}^{(1)}, Y_{i}^{(0)}) \mid X_i = x \sim \mathbb{P}(\cdot \mid X_i = x)
  \end{equation}.
-  This way, the \emph{individualised treatment effect} for subject $i$ can be expressed as 
+This way, the \emph{individualised treatment effect} for subject $i$ can be expressed as 
 
 \begin{equation}
 T(x) = \mathbb{E}[Y_{i}^{(1)} - Y_{i}^{(0)} \mid X_i = x] . \label{eq:ite}
@@ -458,14 +446,14 @@ Each sample is comprised of a tuple $ \langle X_i, W_i, Y_{i}^{(W_i)} \rangle$, 
 
 The treatment assignment (covered in detail in section \ref{sec:propensity-score}) is modelled as a random variable depending on the subjects' features, i.e. $W_i \not \perp X_i$. The assignment reflects a domain-specific policy which can be captured in terms of the probability $p(x) = \mathbb{P}(W_i = 1 \mid X_i = x)$ called the \emph{propensity score}.
 
-The objective of counterfactual inference is to fit a function to the observed way in order to estimate the individualised treatment effect. A variety of models and approaches has been proposed as discussed in detail in section \ref{sec:status-quo}.
+The objective of counterfactual inference is to fit a function to the observed data $\mathcal{D}$ in order to estimate the individualised treatment effect. A variety of models and approaches has been proposed as discussed in detail in section \ref{sec:status-quo}.
 % TODO What about how to estimate the ITE?  
 
 
 \subsection{Counterfactual Inference vs. Supervised Learning} \label{sec:cfi-vs-supervised-learning}
 When fitting a function to estimate the ITE we could technically use any kind of model fitting approach. However, it is imperative to understand how the task of estimating the ITE using counterfactual inference is fundamentally different from a standard \emph{supervised learning problem} in machine learning.
 
-% GRAPH Create graph that illustrates the example
+% GRAPH Create graph that illustrates the example. ALSO, see critical section below
 \begin{wrapfigure}{r}{0.6\textwidth}
 	\centering
 	\includegraphics[width=0.6\textwidth]{figures/chapter-2/counterfactual-vs-supervised-learning.png}
@@ -474,26 +462,29 @@ When fitting a function to estimate the ITE we could technically use any kind of
 
 
 The problem requires making inferences on a set of counterfactual samples using a set of factual
-samples. These two quantities, however, normally do not follow the same probability distribution. In fact, this would only be the case if the treatment was assigned randomly with an equal chance of $p = 0.5$ in which case we could actual treat the problem as a supervised learning problem.  In reality, the treatment assignment is not random but reflects particular domain-specific policy (see section \ref{sec:propensity-score}). 
+samples. These two quantities, however, normally do not follow the same probability distribution. In fact, this would only be the case if the treatment was assigned randomly with an equal chance of $p = 0.5$ for which we could treat the problem as a supervised learning problem.  In reality, the treatment assignment is not random but reflects a particular domain-specific policy (see section \ref{sec:propensity-score}). 
 
-Consider the following example illustrated in figure \ref{fig:counterfactual-inference-vs-supervised-learning}: A doctor is treating patients with ... % TODO Write proper example that corresponds with figure
+%Consider the following example illustrated in figure \ref{fig:counterfactual-inference-vs-supervised-learning}: A doctor is treating patients with ... 
+% CRITICAL!!! GRAPH Write proper example that corresponds with figure
 %For example, one may be interested to know the consequences of smoking or the consequences of going to university. The people 'treated' are simply those—the smokers, or the university graduates—who in the course of everyday life undergo whatever it is that is being studied by the researcher. In both of these cases it is unfeasible (and perhaps unethical) to randomly assign people to smoking or a university education, so observational studies are required. The treatment effect estimated by simply comparing a particular outcome—rate of cancer or lifetime earnings—between those who smoked and did not smoke or attended university and did not attend university would be biased by any factors that predict smoking or university attendance, respectively. PSM attempts to control for these differences to make the groups receiving treatment and not-treatment more comparable. (WIKIPEDIA)
 
-Formally, we are inferring the outcomes over a counterfactual dataset $CF = \{(x_i, 1 - t_i) \}^{n}_{i=1}$ which is distributed according to some probability distribution $CF \sim P^{CF}$ using outcomes that were estimated over a factual dataset $F = \{(x_i, t_i) \}^{n}_{i=1}$ with $F \sim P^{F}$ where $P^{CF} \neq P^F$. We are a dealing with a \emph{covariate shift} which is often encountered in domain adaptation problems (Daume III , Marcu, 2006; Jiang, 2008; Mansour et al., 2009). %CITE appropriately
+Formally, we are inferring the outcomes over a counterfactual dataset $CF = \{(x_i, 1 - t_i) \}^{n}_{i=1}$ which is distributed according to some probability distribution $CF \sim P^{CF}$ using outcomes that were estimated over a factual dataset $F = \{(x_i, t_i) \}^{n}_{i=1}$ with $F \sim P^{F}$ where $P^{CF} \neq P^F$. We are a dealing with a \emph{covariate shift} which is often encountered in domain adaptation problems (\cite{domain-adaptation}).
 
-Consequently, if we treated the treatment assignment as "just another feature" in our dataset, we might be introducing significant biases 
-Concluding, it can be said that when performing counterfactual inference, we have to take specific measures in order to ensure a meaningful estimation of the ITE. 
+Consequently, if we simply treated the treatment assignment as an ordinary input feature in our dataset, we might be introducing significant biases caused by the covariate shift.  Therefore, it can be said that when performing counterfactual inference, we have to take specific measures in order to ensure a meaningful estimation of the ITE that overcomes the covariate shift problem caused by the selection bias of the treatment assignment. 
 
 
 \subsection{Treatment Assignment and Propensity Score} \label{sec:propensity-score}
-Whether or not a context receives the intervention typically depends on an underlying domain-specific policy. Such policies can be well-defined in terms of concrete conditions that have to be met (e.g. "$\text{patient age} < 45 \wedge \text{HIV} = \text{negative} \rightarrow \text{assign treatment}$") or can be less rigorous and reflect a decision maker's intuition or gut-feeling. In both cases, it is important to understand that -- even though we might not be able to comprehend the policy -- the decision is not made randomly but depends on the concrete features of the context or subject. 
+Whether or not a context receives the intervention typically depends on an underlying domain-specific policy. Such policies can be well-defined in  a rule-based setting like 
+\begin{equation}
+\text{age}(x) < 45 \wedge \text{HIV}(x) = \text{negative} \rightarrow T_x = 0
+\end{equation} 
+or less rigorous and simply reflect a decision maker's informal intuition. In both cases, it is important to understand that -- even though we might not be able to comprehend the policy -- the decision is not made randomly but depending on the concrete features of the context or subject. 
 
 In the scope of counterfactual inference, we typically do not assume any kind of control or knowledge of the policy. Instead, we model a subject's inclination to receive the treatment as a random variable called \emph{propensity score} defined as 
 
 \begin{equation}
 p(x) = \mathbb{P}(W_i = 1 \mid X_i = x)
 \end{equation}
- % TODO Check how much duplications are okay with formalisation part. 
 where $X_i$ denotes the subject's features and $W_i$ the treatment assignment with $W_i \not \perp X_i$ (the treatment assignment is not independent from the features). 
 
 While the propensity score is defined for each subject individually, we are sometimes also interested in the \emph{average propensity score} 
@@ -503,40 +494,41 @@ While the propensity score is defined for each subject individually, we are some
 	\mathbf{B} = \frac{1}{n} \cdot \sum \limits_{{i=1}}^{n}  \mathbb{P}(W_i = 1 \mid X_i)
 \end{equation}
 
-for a given dataset giving us an estimate of the selection bias of the policy. 
+for a given dataset yielding an estimate of the selection bias of the policy. 
 
 \subsection{Estimating Treatment Effects} \label{sec:status-quo}
 % TODO Check out Ahmed's related work sections
 A number of different methods and models has been proposed in order to estimate treatment effects. 
 
-\paragraph{Propensity Score Matching} Early works have focused not on the individualised but on \emph{average treatment effect} or ATE defined the estimated value of all individualised treatment effects
+\paragraph{Propensity Score Matching} Early works were not able to estimate the ITE directly but focuses on the \emph{average treatment effect} or ATE instead, defined as the expected value of all individualised treatment effects
 
 \begin{equation}
 \text{ATE} = \mathbb{E}[T(x)]
 \end{equation}
 over a population of interest using a method called \emph{propensity matching}. % CITE propensity matching (Rubin, 2011; Austin, 2011; Abadie & Imbens, 2016; Rosenbaum & Rubin, 1983; Rubin, 1973).
 
-This approach can be summarised as follows: First, we estimate the propensity scores of each subject in the dataset. This is achieved by training a classifier, typically logistic regression or random forests, on the dataset using the treatment assignment as target value that we want to predict. Secondly, we match each subject in the control group (i.e. the subset of untreated patients in the dataset) to one or more (e.g. by using k-Nearest-Neighbour) corresponding subjects in the treatment that most closely resemble the untreated subject. Finally, we are able to estimate  the average treatment effect by computing the average of the differences between the matched subjects. 
- 
-% TODO Is this how it really works? 
+Propensity score matching  can be summarised as follows: First, we estimate the propensity scores of each subject in the dataset. This is achieved by training a classifier, typically logistic regression or random forests, on the dataset using the treatment assignment as target value that we want to predict. Secondly, we match each subject in the control group (i.e. the subset of untreated patients in the dataset) to one or more (e.g. by using k-nearest-neighbour) corresponding subjects in the treatment group that most closely resemble the untreated subject. Finally, we are able to estimate  the average treatment effect by computing the average of the differences between the matched subjects. 
 
-However, a number of challenges has been pointed out that there are a number of limitations and challenges for this approach. For instance, in a randomised trial (i.e. $p =0.5$) the propensity scores of any two subject will roughly equal while their features are significantly different resulting in misleading predictions. King (2016) % CITE Who?
-goes as far as saying that that propensity scores should not be used for matching at all. In addition, PSM only focuses on the average treatment affect and does not allow us to compute the more fine-grained ITE. 
+However, it has been pointed out (\cite{propensity-score-matching-sucks}) that there are a number of limitations and challenges for this approach. For instance, in a randomised trial (i.e. $p =0.5$) the propensity scores of any two subjects will roughly be equal while their features can be significantly different resulting in misleading predictions. (\cite{propensity-score-matching-sucks}) goes as far as saying that propensity scores should not be used for matching at all. 
+
+In addition, propensity score matching is limited to estimating the \emph{average }treatment affect and does not allow us to compute the more fine-grained ITE. 
 
 
 % Classical works have focused on estimating “aver- age” treatment effects through variants of propensity score matching (Rubin, 2011; Austin, 2011; Abadie & Imbens, 2016; Rosenbaum & Rubin, 1983; Rubin, 1973). More recent works tackled the problem of estimating “indi- vidualized” treatment effects using representation learn- ing (Johansson et al., 2016; Shalit et al., 2017), Bayesian inference (Hill, 2012), and standard supervised learning (Wager & Athey, 2015).
 %
 
 \paragraph{Direct Modelling}
-Despite the differences of counterfactual inference to supervised learning, it has been attempted model the ITE directly for instance using K-Neigherest-Neigbhour matching, or more recently using random forests (Wager  Athey, 2015) or neural networks that are treating the treatment assignment as a feature. % CITE . 
-One way to address the challenges described in section \ref{sec:cfi-vs-supervised-learning}, is to introduce a dedicated term in the objective function that tries to penalise the imbalance between the factual and counterfactual distributions.  
+Despite the differences of counterfactual inference to supervised learning, it has been attempted model the ITE directly for instance using K-nearest-neighbour matching, or more recently using random forests (\cite{random-forests}) and neural networks (\cite{sontag-direct-modelling}) that are treating the treatment assignment as a feature.
+
+One way to address the problem of covariate shift caused by the selection bias described in section \ref{sec:cfi-vs-supervised-learning}, is to introduce a dedicated term in the objective function that penalises the imbalance between the factual and counterfactual distributions.  
 
 
 \paragraph{Representation Learning} \label{sec:representation-learning}
 Most recently, deep neural networks have been applied to the problem of counterfactual inference resulting in promising first results. 
 
-One of current state-of-the-art methods treats the task as a problem in \emph{representation learning} (Sontag). % CITE Sontag
-Their approach is based on the concept of learning balanced representations for the treated and untreated subjects in the dataset such that the distribution of the factual and counterfactual outcomes is reduced. 
+One of the current state-of-the-art methods called \emph{balancing neural network} (BNN) treats the task as a problem in \emph{representation learning} (\cite{sontag-paper}).
+
+The approach is based on the concept of learning balanced representations for the treated and untreated subjects in the dataset such that the discrepancy between the distributions of the factual and counterfactual outcomes is reduced. 
 
 \begin{figure}[h]
 	\centering
@@ -545,7 +537,7 @@ Their approach is based on the concept of learning balanced representations for 
 \end{figure}
 
 Concretely, they propose an architecture for feed-forward neural networks (illustrated in figure \ref{fig:balanced-representations-architecture}) in which the first $d_r$ hidden layers are responsible for learning a balanced representation $\Phi$ which is then processed in the remaining $d_o$ hidden outcome layers. 
-The imbalance of the representation is measured in terms of a function \emph{disc} while the outcome is optimised using the objective function 
+The imbalance of the representation is minimised in terms of a function \emph{disc} whereas the outcome is optimised using the objective function 
 
 \begin{equation}
 	\text{loss}(h(\Phi, t), y) = \frac{1}{n}\sum_{i=1}^{n} \mid h(\Phi(x_i)), t_i), - y_i^{F} \mid
@@ -559,19 +551,13 @@ that computes the absolute error between the prediction of the learnt hypothesis
 	\caption{Architecture for Balanced Representations}\label{fig:balanced-representations-architecture}
 \end{figure}
 
-Their method has achieved promising results and can be considered state-of-the-art. 
+Their method consistently outperformed competing approaches and can be considered state-of-the-art. 
 
 
 \paragraph{Deep Neural Networks} 
-Despite the recent successes of deep neural networks in many other problem areas, only limited research has been done on using them for the task of causal inference. However, the previous example of representation learning, % SONTAG
-indicates promising first results and demonstrates that they can be highly suitable for the task beating existing statistical methods.
+Despite the recent successes of deep neural networks in many problem areas, only limited research has been done on using them for the task of causal inference. However, the previous example of representation learning \cite{sontag-paper}, indicates promising first results and demonstrates that neural networks can be highly suitable for the task. 
  
-%However, using deep neural networks introduces certain challenges for this task such as avoiding overfitting and 
-%
-%and represents a very recent area of research. A typical problem of neural networks is to 
-
-
-This thesis deals with the questions of how to improve the state-of-the-art in counterfactual inference using deep neural networks. In the following chapters, we propose a novel architecture for neural networks that conceptualises the problem as a multi-task learning problem, we introduce a propensity-based dropout scheme for regularisation, and propose an effective way to learn its model hyper-parameters. 
+This thesis deals with the questions of how to improve the state-of-the-art in counterfactual inference using deep neural networks. In the following chapters, we propose a novel architecture for neural networks that conceptualises the problem as a multi-task learning problem, we introduce a propensity-based dropout scheme for regularisation and overcoming the selection bias, and present an efficient way to infer suitable hyper-parameters for the model. 
 
 
 %\subsection{Challenges}

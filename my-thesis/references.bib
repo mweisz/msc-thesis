@@ -156,5 +156,124 @@
 }
 
 
+@INPROCEEDINGS{inductive-bias,
+	author = {Richard Caruana},
+	title = {Multitask Learning: A Knowledge-Based Source of Inductive Bias},
+	booktitle = {Proceedings of the Tenth International Conference on Machine Learning},
+	year = {1993},
+	pages = {41--48},
+	publisher = {Morgan Kaufmann}
+}
+
+@inproceedings{bayesian-optimisation,
+	author = {Mockus, Jonas},
+	title = {On Bayesian Methods for Seeking the Extremum},
+	booktitle = {Proceedings of the IFIP Technical Conference},
+	year = {1974},
+	isbn = {3-540-07165-2},
+	pages = {400--404},
+	numpages = {5},
+	url = {http://dl.acm.org/citation.cfm?id=646296.687872},
+	acmid = {687872},
+	publisher = {Springer-Verlag},
+	address = {London, UK, UK},
+} 
+
+@incollection{bayesian-optimisation-results,
+	title = {Practical Bayesian Optimization of Machine Learning Algorithms},
+	author = {Snoek, Jasper and Larochelle, Hugo and Adams, Ryan P},
+	booktitle = {Advances in Neural Information Processing Systems 25},
+	editor = {F. Pereira and C. J. C. Burges and L. Bottou and K. Q. Weinberger},
+	pages = {2951--2959},
+	year = {2012},
+	publisher = {Curran Associates, Inc.},
+	url = {http://papers.nips.cc/paper/4522-practical-bayesian-optimization-of-machine-learning-algorithms.pdf}
+}
+
+
+@article{potential-outcomes,
+	author = {Donald B Rubin},
+	title = {Causal Inference Using Potential Outcomes},
+	journal = {Journal of the American Statistical Association},
+	volume = {100},
+	number = {469},
+	pages = {322-331},
+	year = {2005},
+	doi = {10.1198/016214504000001880},
+	
+	URL = { 
+	http://dx.doi.org/10.1198/016214504000001880
+	
+	},
+	eprint = { 
+	http://dx.doi.org/10.1198/016214504000001880
+	
+	}
+	
+}
+
+@article{domain-adaptation,
+	author    = {Hal Daum{\'{e}} III and
+	Daniel Marcu},
+	title     = {Domain Adaptation for Statistical Classifiers},
+	journal   = {CoRR},
+	volume    = {abs/1109.6341},
+	year      = {2011},
+	url       = {http://arxiv.org/abs/1109.6341},
+	timestamp = {Wed, 07 Jun 2017 14:41:07 +0200},
+	biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/abs-1109-6341},
+	bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+
+
+@workingpaper {propensity-score-matching-sucks,
+	title = {Why Propensity Scores Should Not Be Used for Matching},
+	year = {Working Paper},
+	abstract = {We show that propensity score matching (PSM), an enormously popular method of preprocessing data for causal inference, often accomplishes the opposite of its intended goal -- increasing imbalance, inefficiency, model dependence, and bias. PSM supposedly makes it easier to find matches by projecting a large number of covariates to a scalar propensity score and applying a single model to produce an unbiased estimate. However, in observational analysis the data generation process is rarely known and so users typically try many models before choosing one to present. The weakness of PSM comes from its attempts to approximate a completely randomized experiment, rather than, as with other matching methods, a more efficient fully blocked randomized experiment. PSM is thus uniquely blind to the often large portion of imbalance that can be eliminated by approximating full blocking with other matching methods. Moreover, in data balanced enough to approximate complete randomization, either to begin with or after pruning some observations, PSM approximates random matching which, we show, increases imbalance even relative to the original data. Although these results suggest that researchers replace PSM with one of the other available methods when performing matching, propensity scores have many other productive uses.},
+	author = {Gary King and Richard Nielsen}
+}
+
+
+@ARTICLE{random-forests,
+	author = {{Wager}, S. and {Athey}, S.},
+	title = "{Estimation and Inference of Heterogeneous Treatment Effects using Random Forests}",
+	journal = {ArXiv e-prints},
+	archivePrefix = "arXiv",
+	eprint = {1510.04342},
+	primaryClass = "stat.ME",
+	keywords = {Statistics - Methodology, Mathematics - Statistics Theory, Statistics - Machine Learning},
+	year = 2015,
+	month = oct,
+	adsurl = {http://adsabs.harvard.edu/abs/2015arXiv151004342W},
+	adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{sontag-direct-modelling,
+	author = {{Shalit}, U. and {Johansson}, F.~D. and {Sontag}, D.},
+	title = "{Estimating individual treatment effect: generalization bounds and algorithms}",
+	journal = {ArXiv e-prints},
+	archivePrefix = "arXiv",
+	eprint = {1606.03976},
+	primaryClass = "stat.ML",
+	keywords = {Statistics - Machine Learning, Computer Science - Artificial Intelligence, Computer Science - Learning},
+	year = 2016,
+	month = jun,
+	adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160603976S},
+	adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@ARTICLE{sontag-paper,
+	author = {{Johansson}, F.~D. and {Shalit}, U. and {Sontag}, D.},
+	title = "{Learning Representations for Counterfactual Inference}",
+	journal = {ArXiv e-prints},
+	archivePrefix = "arXiv",
+	eprint = {1605.03661},
+	primaryClass = "stat.ML",
+	keywords = {Statistics - Machine Learning, Computer Science - Artificial Intelligence, Computer Science - Learning},
+	year = 2016,
+	month = may,
+	adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160503661J},
+	adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
 
 
