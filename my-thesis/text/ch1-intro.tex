@@ -17,95 +17,68 @@
 The technological advances of recent years have resulted in an increasing availability of data in various fields such as healthcare, education, and economics. 
 % TODO Quote Larry Page
 % TODO Mention that we nowadays even on the level of *personalised* medicine 
-The potential of this data is enormous as it helps us  identify, understand, and describe the underlying mechanics and correlations within the data. Furthermore, it allows us to create predictive models that can be used to estimate the effect of actions we are taking which is highly relevant for future decision-making. 
+The potential of this data is enormous as it helps identify, understand, and describe the underlying mechanics and correlations within the data. Moreover, it allows us to create predictive models that can be used by decision and policy-makers % STYLE Can I do this? 
+ to estimate the potential effect of an intervention.
 
 % TODO At the same time, it's more challening than ever
 
 
 %and many different fields such as  data science, statistics, computer science and the corresponding disciplines (medicines, policy-makers, ) are trying to make use of this data in order create predictive models to understand the underlying mechanics. 
 
-When considering causal relations within the data, we are often interested in answering \emph{counterfactual questions} such as "What would have happened if a different action had been taken?”. Such questions typically arise from observational studies which investigate the observed effect an intervention of interest has on a given subject. In a medical context, for instance, this might concern how a number of patients — each with individual features such as blood pressure, heart rate, and age — have responded to being treated with a treatment $t$ out of two possible treatments $t \in \{a, b\}$.
+When considering causal relations within the data, we are often interested in answering \emph{counterfactual questions} such as "What would have happened if a different action had been taken?”. Such questions typically arise from observational studies which investigate the observed effect an intervention of interest has on a given subject. In a medical context this might concern how a number of patients — each with individual features such as blood pressure, heart rate, and age — have responded to being treated with a treatment $t$ out of two possible treatments $t \in \{a, b\}$.
 
-Answering counterfactual questions provides a way to estimate the \emph{individualised treatment effect} (ITE) of a treatment, which is the difference between the factual (observed) outcome and the counterfactual (unobserved) outcome. This quantity can be estimated by fitting a model to the observed data in order to predict the ITE for a given individual, helping us to make an informed decision concerning which treatment is preferable over the other.
+Answering counterfactual questions provides a way to estimate the \emph{individualised treatment effect} (ITE) of an intervention or treatment, which is defined as the difference between the factual (observed) outcome and the counterfactual (unobserved) outcome. This quantity can be estimated by fitting a model to the observed data of the observational study, helping us to make informed decisions concerning which treatment is preferable for a given individual.
 
-A number of statistical models have been applied to counterfactual reasoning, achieving different levels of success depending on the amount of available training data, the nature of the problem, and the expressiveness of the models themselves. In addition, these models often depend on strong collaboration with domain experts incorporating their specific knowledge into the models. 
+A number of statistical models have been applied to counterfactual reasoning achieving different levels of success depending on the amount of available training data, the nature of the problem, and the expressiveness of the models themselves. In addition, these models often depend on strong collaboration with domain experts incorporating their specific knowledge into the models. 
 
 % TODO Should I mention here that this is different form standard supervised learning? 
 
 In contrast, the field of machine learning tries to automatically infer appropriate models from the data without (or with minimum) need for human intervention aiming to minimise the assumptions that have to be presupposed on the models. In particular, the sub-field of \emph{deep learning} which makes us of deep neural networks has been applied to the problem of counterfactual inference only very recently but has already achieved promising first results. This class of models, however, introduces additional challenges regarding the selection of appropriate architectures and hyper-parameters, and represents an open area of research.  
 
-This dissertation which aims to investigate existing methods and improve the state-of-the art in counterfactual reasoning. It focuses on deep neural networks as the model of choice, as they are able to deal with large amounts of data and have proven to be able to capture complex non-linear dependencies, making them highly suitable for the task. In addition, only limited research has been done in this field so far.
+This dissertation aims to investigate existing methods and improve the state-of-the art in counterfactual inference. It focuses on deep neural networks as the model of choice, as they have proven to be able to capture complex non-linear dependencies, making them highly suitable for the task. Additionally, only limited research has been done in this field so far.
 
 
-The applications of counterfactual inference are ubiquitous and highly relevant to a variety of fields including treatment-planning in healthcare, policy-making for organisations, or even ad-placement for online platforms. As a consequence, research in this field can have a significant impact on a number of disciplines and potentially affect many people’s lives by helping important institutions, governments, and industries to make more informed decisions.
-
-
-%\minitoc
-
-
-%	☐ More and more data
-%	☐ List some examples
-%	☐ Observational studies are of great relevance
-%	☐ Answer counterfactual questions
-%	☐ Want to predict the individualised treatment assignemnt
-%	☐ Example of what we can do with that (Treatment planning etc.)
-%	☐ Machine learning helps to make sense of this data
-%	☐ Machine Learning is suitable
-%	☐ Deep Learning in particular
-%	☐ What is the main idea of deep learning?
-%	☐ Why, what are the benefits
-%	☐ What is the status quo?
-%	☐ What are we trying to improve
-%	☐ How can we use the specifics of the problem to improve outomes?
-
+The applications of counterfactual inference are ubiquitous and highly relevant to a variety of fields including treatment-planning in healthcare, policy-making for organisations, or even ad-placement for online marketing platforms. As a consequence, research in this field can have a significant impact on a number of disciplines and potentially affect many people’s lives by helping important institutions, governments, and industries to make informed decisions.
 
 
 \section{Scope}
 
-This dissertation concludes the findings of the master project \emph{Deep Learning for Counterfactual Inference} as part of the program \emph{MSc in Computer Science} at the \emph{University of Oxford} in 2016/17. 
+This dissertation concludes the findings of the master project \emph{Deep Learning for Counterfactual Inference} supervised by Prof. Dr. Mihaela van der Schaar as part of the program \emph{MSc in Computer Science} at the \emph{University of Oxford} in 2016/17. 
 
-The goal of the project is to improve the state-of-the art in counterfactual reasoning using deep neural networks. This includes evaluating the effectiveness of existing methods and architectures and coming up with new approaches for the task of counterfactual inference.
+The objective of the project is to improve the state-of-the art in counterfactual reasoning using deep neural networks. This includes evaluating the effectiveness of existing methods and architectures and coming up with new approaches for the task of counterfactual inference.
 
-We evaluate our proposed methods by running a number of experiments using synthetic and real-world datasets and demonstrate how they compete 
-
-% TODO How can we use the specifis of counterfactual inference for DL? 
-
-Investigated questions include how to effectively train large networks in order to achieve a high accuracy and make meaningful predictions.
+We evaluate our proposed methods by running a number of experiments using synthetic datasets and real-world observational studies showing how our models compete against baseline approaches and the state-of-the-art. 
 
 \section{Contribution}
 The contributions of the project findings are twofold: 
-Firstly, we propose \emph{deep counterfactual networks} (DCNs) -- a novel architecture for counterfactual inference  that conceptualises it as a \emph{multi-task} learning problem using separate outcomes for the treated and untreated subjects. In addition, we introduce \emph{propensity-dropout} -- a novel way of regularising our model to avoid over-fitting by using a variation of standard dropout % TODO Cite
-that is dependent on the subject's propensity score (a measure to quantify a subject's probability to be treated). These contributions have been submitted in form of a paper to  the \emph{Workshop on Principled Approaches to Deep Learning (PADL)} at \emph{ICML 2017}. 
-% TODO How to quote the others? Check if it's okay to mention this part here? 
+Firstly, we propose \emph{deep counterfactual networks} (DCNs) -- a novel architecture for counterfactual inference  that conceptualises it as a multi-task learning problem \cite{multi-task-learning} using separate outcomes for the treated and untreated subjects. In addition, we introduce \emph{propensity-dropout} --- a novel way of regularising our model by using a variation of standard dropout \cite{dropout}
+that is dependent on the subject's propensity score \cite{propensity-score} (a measure to quantify a subject's probability to be treated). 
 
 Secondly, we introduce a novel and efficient way to automatically learn an appropriate architecture for a DCN by exploiting specific characteristics of the dataset without the need for computationally expensive hyper-parameter optimisation. 
 
-Using experiments on synthetic and real-world data, we can show how our approaches outperform the state-of-the art for counterfactual inference. 
+Using experiments conducted on synthetic datasets and real-world observational studies, we can show how our approaches compete with and partially outperform the state-of-the art for counterfactual inference. 
 
 
 
 \section{Thesis Structure}
-The thesis consists of three parts and is structured into 8 % FINAL Make sure this is correct
-chapters which are briefly described below. The first part \emph{Introduction} is comprised of chapter 1 and 2 and introduces the problem background, relevant theory, and related works. The second part \emph{Methodology} including chapters 3 and 4 introduces our own contributions -- namely the concept of \emph{deep counterfactual networks}, a corresponding dropout scheme, and an efficient way to derive its architecture. The third and last part of the thesis \emph{Conclusion and Future Work} comprised of chapters 6, 7, and 9 contains a summary of our finding, discusses the results and our contribution and concludes with future work. 
+The thesis consists of four parts and is structured into a total of 7 chapters which are briefly outlined below. 
 
-\subsection*{Chapter \ref{ch:2-background}: \nameref{ch:2-background}}
-The second chapter describes the theoretical foundations of the counterfactual inference using deep learning. We briefly describe core concepts of causal inference, machine learning, deep learning, architecture learning, and data generation. 
-In addition, we discuss the status-quo in counterfactual inference and any related works. 
+The first part \emph{Introduction} is comprised of chapter 1 and 2, introducing the problem background, the theoretical foundations, and related works. The second part \emph{Methodology} including chapters 3 and 4 introduces our own contributions -- namely the concept of \emph{deep counterfactual networks}, a corresponding dropout scheme (PD), and an efficient way to derive its architecture. The third part \emph{Experiments and Discussions} holds chapter 5 in which we conduct experiments on our models and evaluate their performance. The fourth and last part of the thesis \emph{Conclusion and Future Work} contains chapters 6 and 7, providing a summary of our findings, an outline of potential limitations of our models, and a future work section. 
 
-\subsection*{Chapter \ref{ch:3-DCNs}: \nameref{ch:3-DCNs}}
-The third chapter introduces our model of \emph{deep counterfactual networks} -- a deep neural network conceptualising causal inference as a multi-task learning problem. We describe its architecture, the concept of \emph{propensity-dropout} and discuss its contribution and challenges. 
+\paragraph{Chapter \ref{ch:2-background}: \nameref{ch:2-background}}
+The second chapter deals with the theoretical foundations of counterfactual inference using deep learning. Concretely, we describe core concepts of machine learning, its subfield of deep learning, and causal inference. This chapter also includes the related works. 
 
-\subsection*{Chapter \ref{ch:4-DCN-LAs}: \nameref{ch:4-DCN-LAs}}
-The fourth chapter covers the second part of our main contributions -- an efficient way to automatically derive an appropriate architecture for DCNs by exploiting specific characteristics of the dataset. We introduce each characteristic separately, formalise a corresponding metric and show and algorithm that uses these metrics to derive a suitable architecture. 
+\paragraph{Chapter \ref{ch:3-DCNs}: \nameref{ch:3-DCNs}}
+The third chapter introduces our model of \emph{deep counterfactual networks} -- a deep neural network conceptualising causal inference as a multi-task learning problem. In addition, we propose the concept of \emph{propensity-dropout}, discuss its properties, and provide a formalisation.
+ 
+\paragraph{Chapter \ref{ch:4-DCN-LAs}: \nameref{ch:4-DCN-LAs}}
+The fourth chapter covers the second part of our main contributions -- an efficient way to automatically derive an appropriate architecture for DCNs by exploiting specific characteristics of the dataset. We introduce each characteristic separately, formalise a corresponding metric and outline an algorithm that uses these metrics to derive a suitable architecture. 
 
-\subsection*{Chapter \ref{ch:5-experiments}: \nameref{ch:5-experiments}}
-In the fifth chapter, we conduct a series of experiments on our proposed models in order to evaluate their performance. Firstly, we are using a synthetic model, for which we have full access to the counterfactual outcomes and are able to parametrise the characteristics of the data to see how it effects the performance of our models. Secondly, we apply our models to a real-world dataset to see how well it generalises to unknown data.
+\paragraph{Chapter \ref{ch:5-experiments}: \nameref{ch:5-experiments}}
+In the fifth chapter we conduct a series of experiments on our proposed models in order to evaluate their performance. Firstly, we are using a synthetic model for which we have full access to the counterfactual outcomes and are able to parametrise the desired characteristics of the data arbitrarily to investigate how they effect the performance of our models. Secondly, we apply our models to real-world datasets to see how well they generalise towards a more realistic setting. For each experiment we include a discussion in which we compare our models' performances to competing methods.
 
-\subsection*{Chapter \ref{ch:6-conclusion}: \nameref{ch:6-conclusion}}
-The sixth chapter concludes our findings an discusses the results of the experiment section. We compare our models' performances to competing methods and critically evaluate the underlying factors. 
+\paragraph{Chapter \ref{ch:6-conclusion}: \nameref{ch:6-conclusion}}asdf
+The sixth chapter concludes our findings by providing a summary of the results, their implications and contributions, and the current limitations and shortcomings of our models. 
 
-\subsection*{Chapter \ref{ch:7-contribution}: \nameref{ch:7-contribution}}
-In the penultimate chapter we discuss the implications of our approach and describe the contributions of the project to the task of causal inference. 
-
-\subsection*{Chapter \ref{ch:8-future-work}: \nameref{ch:8-future-work}}
+\paragraph{Chapter \ref{ch:7-future-work}: \nameref{ch:7-future-work}}
 The final chapter of the thesis discusses open areas of research in the field of counterfactual inference using neural networks. In particular, we describe current limitations of our proposed models and how they could be overcome. 
