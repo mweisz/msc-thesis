@@ -12,9 +12,11 @@ In the previous chapter we have discussed the findings of the project, the contr
 
 \paragraph{Time-Series Data} It would be of great relevance to investigate how our models can be extended to time-series input data that contains temporal dependencies between the features. Future work in this field might examine the effectiveness of a multi-task framework with propensity-dropout to a recurrent neural network. 
 
-\paragraph{Extensions of Propensity-Dropout} Our proposed method of propensity-dropout in order to 
+\paragraph{Extensions of Propensity-Dropout} While our proposed propensity-based dropout scheme provides promising first results in the experiments, it would be interesting to investigate how the propensity score could also be used in competing regularising approaches such as DropConnect. % CITE Dropconnect
 
-\paragraph{Empirical Model for Architecture Learning} Lorem ipsum dolor sit amet consectetur adipiscing elit etiam donec, sed faucibus fames felis ornare malesuada quisque cursus, sollicitudin dis integer praesent rhoncus euismod nulla turpis.
+\paragraph{Empirical Model for Architecture Learning} Our approach of automatically inferring an appropriated DCN architecture is based on an empirical model that is trained in a supervised setting on synthetically-generated datasets. Due to the very nature of such a heuristic approach, the empirical model should be subject to ongoing research and improvements. In particular, it could be beneficial to analyse how we can ensure that the synthetically-generated have similar properties to real-world datasets in order to allow a maximum level of generalisation.  
+
+
 
 
 %## DCN-PD:
