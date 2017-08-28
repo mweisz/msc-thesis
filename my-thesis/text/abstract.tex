@@ -1,9 +1,15 @@
-Your abstract text goes here.  Check your departmental regulations, but generally this should be less than 300 words. 
+The technological advances of recent years have resulted in an increasing availability of data in various fields such as healthcare, education, and economics. Of particular interest are observational studies which investigate the effect of a specific intervention or action on a given context or subject. 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sit amet nibh volutpat, scelerisque nibh a, vehicula neque. Integer placerat nulla massa, et vestibulum velit dignissim id. Ut eget nisi elementum, consectetur nibh in, condimentum velit. Quisque sodales dui ut tempus mattis. Duis malesuada arcu at ligula egestas egestas. Phasellus interdum odio at sapien fringilla scelerisque. Mauris sagittis eleifend sapien, sit amet laoreet felis mollis quis. Pellentesque dui ante, finibus eget blandit sit amet, tincidunt eu neque. Vivamus rutrum dapibus ligula, ut imperdiet lectus tincidunt ac. Pellentesque ac lorem sed diam egestas lobortis.
+When inferring causal relations from the data, we are often interested in answering counterfactual questions such as ”What would have happened if a different action had been taken?” allowing us to estimate the \emph{individualised treatment effect} -- an important quantity representing the difference between the potential outcomes.
 
-Suspendisse leo purus, efficitur mattis urna a, maximus molestie nisl. Aenean porta semper tortor a vestibulum. Suspendisse viverra facilisis lorem, non pretium erat lacinia a. Vestibulum tempus, quam vitae placerat porta, magna risus euismod purus, in viverra lorem dui at metus. Sed ac sollicitudin nunc. In maximus ipsum nunc, placerat maximus tortor gravida varius. Suspendisse pretium, lorem at porttitor rhoncus, nulla urna condimentum tortor, sed suscipit nisi metus ac risus.
+Due to the very nature of the problem, we are never able to observe both potential outcomes in any real-world dataset. Furthermore, the factual and counterfactual feature distributions are typically different making counterfactual inference a challenging task that is inherently different from regular supervised learning. 
 
-Aenean sit amet enim quis lorem tristique commodo vitae ut lorem. Duis vel tincidunt lacus. Sed massa velit, lacinia sed posuere vitae, malesuada vel ante. Praesent a rhoncus leo. Etiam sed rutrum enim. Pellentesque lobortis elementum augue, at suscipit justo malesuada at. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent rhoncus convallis ex. Etiam commodo nunc ex, non consequat diam consectetur ut. Pellentesque vitae est nec enim interdum dapibus. Donec dapibus purus ipsum, eget tincidunt ex gravida eget. Donec luctus nisi eu fringilla mollis. Donec eget lobortis diam.
+In the scope of this thesis we investigate how deep neural networks can be used for the task of counterfactual inference. This class of models is able to capture complex non-linear dependencies in the data and responsible for a number of recent successes in problem areas such as computer vision and natural language processing. 
 
-Suspendisse finibus placerat dolor. Etiam ornare elementum ex ut vehicula. Donec accumsan mattis erat. Quisque cursus fringilla diam, eget placerat neque bibendum eu. Ut faucibus dui vitae dolor porta, at elementum ipsum semper. Sed ultrices dui non arcu pellentesque placerat. Etiam posuere malesuada turpis, nec malesuada tellus malesuada.
+Concretely, we propose \emph{deep counterfactual networks} (DCNs), a novel approach that conceptualises causal inference as a multi-task learning problem. Furthermore, we introduce \emph{propensity-dropout} (PD), a corresponding regularisation scheme based on traditional dropout.
+
+In addition, we present an efficient method for automatically inferring appropriate hyper-parameters for DCNs based on an empirical model.
+
+Lastly, we conduct experiments based on synthetic datasets and two real-world observational studies and conclude by showing how our models have the potential to compete with and even outperform the state-of-the art in counterfactual inference. 
+
+
