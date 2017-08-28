@@ -83,6 +83,7 @@ This dissertation focuses on using \emph{deep learning} for the problem of count
 
 
 \subsection{Variance, Bias, and Regularisation} \label{sec:regularisation}
+% GRAPH Re-create graph!
 \begin{figure}[]
 	\centering
 	\includegraphics[width=0.8\textwidth]{figures/chapter-2/overfitting-underfitting.png}
@@ -114,13 +115,6 @@ We will cover the concept of regularisation in more detail in section \ref{sec:d
 %
 
 
-% TODO Add formula for objective functions with L1 and L2 regularisation
-
-% TODO Regularistion is actually just for avoiding overfitting!   
-
-% GRAPH Re-create graph!
-
-
 % TODO Should I include learning curves as well? 
 %% TODO! Re-create graph!
 %\begin{figure}[]
@@ -137,73 +131,69 @@ We will cover the concept of regularisation in more detail in section \ref{sec:d
 \subsection{Introduction}
 Deep learning refers to a field of machine learning that is based on the use of so called \emph{deep neural networks}. 
 
-The approach is inspired by how the human brain works by modelling biological neurons and their interconnections to other neurons as terms of an artificial neuron that has similar properties. 
+The approach is loosely inspired by how the human brain works,  modelling biological neurons and their interconnections in terms of artificial neurons that express similar properties.
 
-The details about our understanding of the inner mechanics and biochemical processes of the human brain are beyond the scope of this thesis. On a high level, however, Each neuron receives inputs signals on its dendrites which are connected to neighbouring neurons axons using a synapse. The inputs are accumulated and processed within the cell body causing the cell to output a signal on its own axon which in turn represents the potential input for other cells.
-% TODO Refine this. Make sure this is correct and in the right section! What exactly is a synapse. 
-Through these interconnections the neurons form a highly complex structure that can be conceptualised in terms of a biological neural network. It is estimated that the human brain possesses about 100 billion allowing it to process complex signals, abstract concepts, and the general process people refer to as \emph{thinking}. 
+
+\paragraph{Biological Foundations}
+The details about our understanding of the mechanics and biochemical processes of the human brain are well beyond the scope of this thesis. On a conceptual level, however, each neuron receives inputs signals on its dendrites which are connected to the axons of neighbouring neurons. The input signals are accumulated and processed within the cell body causing the cell to output a signal on its own axon (in turn representing a potential input for other cells). By means of these interconnections, the neurons form a highly complex structure that can be conceptualised in terms of a biological neural network. It is estimated that the human brain contains about 100 billion neurons  allowing it to process complex signals and reason about abstract concepts \cite{number-of-neurons}. 
 % TODO What about learning? 
 
-In a bionic fashion an artificial neural network adopts this architecture in a simplified way by defining a network of artificial neurons that are connected according to a certain topology. The analogy between the human and the artificial neurons is illustrated in figure \ref{fig:biological-vs-artificial-neuron}. 
-This way, an artificial neural network (henceforth called neural network), is able to capture complex correlations and interdependencies within the data. 
+In a bionic fashion, an \emph{artificial neural network} (henceforth called \emph{neural network}), adopts this architecture in a simplified way by defining a network of \emph{artificial neurons} (discussed in details in section \ref{sec:mlp}) that are connected according to a certain topology. The analogy between the human and the artificial neurons is illustrated in figure \ref{fig:artificial-neuron}: The artificial neuron receives input signals, processes the signals according to an internal activation function, and outputs a computed signal on its own. 
+
+Analogous to its biological counterpart the a neural network is able to capture complex non-linear relationships to approximate arbitrarily complex functions. 
+
+
 
 % GRAPH Recreate graph
 \begin{figure}[h]
 	\caption{A biological neuron vs. an artificial neuron}\label{fig:biological-vs-artificial-neuron}
-	% GRAPH-LABEL Add proper description
 	\centering
 	\includegraphics[width=0.8\textwidth]{figures/chapter-2/biological-vs-artificial-neurons.png}
 \end{figure}
 
 
-The concepts of using neural networks has been in existence since the 1970s. % CITE first neural networks
-After an initial enthusiasm, however, neural networks lost traction in the following two decades due to the realisation that the existing hardware did not allow for a degree of scalability that would have been required to solve the desired problems. % CITE ai-winter
+\paragraph{History of Neural Networks}The theoretical foundations of neural networks date back to the 1940s \cite{nn-history}, before becoming popular in the 1970s after the \emph{backpropagation algorithm} (see section \ref{sec:training}) had been successfully applied to neural networks  \cite{backprop1}. Following an initial enthusiasm, however, neural networks fell out of favour in the following decades due to the realisation that the models typically expressed a degree of computational complexity that could not be accommodated by the existing hardware.
 
-This changed, however, when in 2014 X,Y, and Z used a neural network outperformed all existing methods on the \emph{ImageNet Challenge} which seeks to recognise and label a set of objects in pictures. % CITE imagenet
+This changed again in the early 2010s when a neural networks significantly outperformed existing methods in a variety of fields such as computer vision \cite{imagenet} and natural language processing \cite{nlp}. % CITE imagenet
 
-Ever since, deep neural networks have been responsible for some of the most recent successes including self-driving cars and defeating the world champion in Go. % CITE Go 
-According to former chief data scientist and researcher at Stanford University, Andrew Ng, % CITE Andrew Ng 
-two key factors are responsible for renaissance of neural networks and have enabled its recent success: Firstly, the advances in computational capacities which includes highly-optimised processing units such as GPUs and ASICS % CHECK ASICS? 
-and corresponding architectures such as distributed clusters and cloud computing. Secondly, the availability of large datasets that can be used for training the models such as web-scale text corpora for natural language processing or large databases of images (imagenet) etc. 
+Ever since, deep neural networks have been responsible for some of the most recent successes in machine learning, including self-driving cars and defeating human champions in the game of Go \cite{alphago}.
+The renaissance of neural networks and its recent successes have typically been attributed to two key factors: Firstly, the advancements in computational capabilities on modern GPUs and other highly-optimised processing units such as \emph{FPGAs} and \emph{ASICS}.
+Secondly, the widespread availability of large datasets that can be used for training the models such as web-scale text corpora for natural language processing or large databases of images that can be used in computer vision. 
 
-Today, deep neural networks represent the state-of-the-art in many areas such as natural language processing % CITE NLP
-and computer vision. They are widely considered one of the most promising areas of machine learning and artificial intelligence in general % CITE importance of deep learning
-and have received a high level of attention in society, media, and politics. Despite its recent success, the usage of deep neural networks poses a multitude of computational, architectural, and domain-specific challenges % CITE Do I need to cite this? 
-and therefore represents of most dynamic areas of research. 
+\paragraph{Status Quo} Today, deep neural networks represent the state-of-the-art for many problems. They are widely considered one of the most promising areas of machine learning and artificial intelligence in general and have received a high level of attention in society, media, and politics. Nevertheless, the usage of deep neural networks poses a multitude of computational, architectural, and domain-specific questions that are the subject of ongoing research. 
 
-\subsection{The Multilayer Perceptron}
-In order to understand how neural networks work, we first investigate one of the most basic forms of neural networks: the \emph{multilayer perceptron} or MLP. 
-% TODO Is a perceptron the same thing as a neuron? Are there other kinds of neurons? 
+\subsection{The Multilayer Perceptron} \label{sec:mlp}
+In order to understand how neural networks work, we first investigate one of its most basic forms: the \emph{multilayer perceptron} or MLP. 
+
 % GRAPH Redo graph
 \begin{figure}[H]
-
-\caption{Prototypical multilayer perceptron with a single hidden layer.}\label{fig:multilayer-perceptron}
 % GRAPH-LABEL Add proper description
 \centering
-\includegraphics[width=0.6\textwidth]{figures/chapter-2/multilayer-perceptron.png}
+\includegraphics[width=0.7\textwidth]{figures/chapter-2/multilayer-perceptron.png}
+\caption{Prototypical multilayer perceptron with a single hidden layer.}\label{fig:multilayer-perceptron}
 \end{figure}
-Figure \ref{fig:multilayer-perceptron} depicts the schematics of an MLP. As the name suggests, it consists of multiple layers each containing a fixed number of artificial neurons that are interconnected exclusively by neurons of neighbouring layers. The first, so called \emph{input layer}, is followed by one or more hidden layers leading to a final so called \emph{output layer}. 
+Figure \ref{fig:multilayer-perceptron} depicts the schematics of a MLP. As the name suggests, it consists of multiple layers each containing a fixed number of artificial neurons (henceforth called neurons) that are interconnected exclusively by neurons of neighbouring layers. The first, so called \emph{input layer}, is followed by one or more \emph{hidden layers} leading to a final so called \emph{output layer}. 
 
 \begin{figure}[h]
-	\caption{Basic building block: Artificial Neuron used for classification.}\label{fig:artificial-neuron}   
 	\centering
 	\includegraphics[width=0.6\textwidth]{figures/chapter-2/artificial-neuron.png}
+	\caption{Basic building block: Artificial Neuron used for classification.}\label{fig:artificial-neuron}   
 \end{figure}
 
+In a MLP, the basic building block is the artificial neuron or \emph{unit} which is illustrated in figure \ref{fig:artificial-neuron}. 
 
-The individual artificial neuron or unit is illustrated in figure \ref{fig:artificial-neuron}. Its output $y$ is computed as 
+Its output $y$ is computed as 
 \begin{equation}
 	% MATHS Check, looks weird with b in front
 	y = \phi(b + \sum_{i=1}^{n} w_i x_i)
 \end{equation}
-where $x_1, \ldots, x_n \in \mathbb{R}$ corresponds to the inputs of the neuron, $w_1, \dots, w_n\in \mathbb{R}$ to the weights and $b \in \mathbb{R}$ to a bias -- trainable parameters of the model -- and $\phi: \mathbb{R} \rightarrow \mathbb{R}$ to a non-linear function referred to as \emph{activation function}. Typical choices for $\phi$ include 
+where $x_1, \ldots, x_n \in \mathbb{R}$ corresponds to the inputs of the neuron, $w_1, \dots, w_n\in \mathbb{R}$ to the weights and $b \in \mathbb{R}$ to a bias ($w$ and  $b$ are the parameters of the model that ought to be learnt) and $\phi: \mathbb{R} \rightarrow \mathbb{R}$ to a non-linear function referred to as \emph{activation function}. Typical choices for $\phi$ include 
 \begin{align*} 
 \phi(x) = \sigma(x) = \frac{1}{1 + e^{-x}} && \text{or} && \phi(x) = tanh(x) = \frac{1  - e^{-2x}}{1  + e^{-2x}}
 \end{align*} 
-where $\sigma(x)$ refers to the \emph{sigmoid function}, $tanh(x)$ to the \emph{hyperbolic tangent}, and 
-% TODO Add another activation function
-... to Z. While each of these activation functions has different properties as illustrated in figure \ref{fig:activation-functions}, a typical characteristic is that they map the input value to the closed interval $[0, 1]$. 
+where $\sigma(x)$ refers to the \emph{sigmoid function}, $tanh(x)$ to the \emph{hyperbolic tangent}, and $ReLU$ to \emph{rectified linear unit}. While each of these activation functions has different properties as illustrated in figure \ref{fig:activation-functions}, a typical characteristic is that they map the input value to the closed interval $[0, 1]$. 
 
+% GRAPH Add plots for sigmoid, tnah, and relu
 \begin{figure}[h]
 	\caption{Typical Activation functions}\label{fig:activation-functions}   
 	\centering
@@ -218,47 +208,40 @@ where $\sigma(x)$ refers to the \emph{sigmoid function}, $tanh(x)$ to the \emph{
 %x = 
 %\end{align}
 
-Despite the relative simplicity of this model, it can be shown that an MLP with appropriate weights and bias parameters is able to represent any arbitrarily complex non-linear function.% CITE Who showed this? Cybenko!
+Despite the relative simplicity of this model, it can be shown that a MLP with a single hidden layer and an activation function as defined above is able to represent any arbitrarily complex non-linear function \cite{mlp-power}.
 
 \subsection{Types of Neural Networks} \label{sec:nn-types}
-There are different types of neural networks defined by a number of characteristics such as network's architecture and the direction of information flow. 
+There are different types of neural networks defined by a number of characteristics such as their topology and the direction of information flow. 
 
-% QUESTION: What's the difference between MLP and standard ff nn? 
-\paragraph{Feed-Forward Neural Networks} Closely related to the MLP described in the previous section, feed-forward neural networks (FFNN) represent a class of networks that is characterised by a set of hidden layers that have a similar shape and are often fully connected (i.e. every node in layer $L_i$ is connected to every node in layer $L_{i-1}$ and $L_{i+1}$). As the name suggest, the information flow is strictly uni-directional from nodes in layers with lower indexes to nodes with higher indexes (i.e. no loops). These types of networks represent the most basic type of network that makes no assumptions about the input data and is used in regression and classification tasks.  
+\paragraph{Feed-Forward Neural Networks} Closely related to the MLP described in the previous section, feed-forward neural networks (FFNNs) represent a class of networks that is characterised by a set of hidden layers that have a similar shape and are often fully connected (i.e. every node in the hidden layer $L_i$ is connected to every node in layers $L_{i-1}$ and $L_{i+1}$). As the name suggest, the information flow is uni-directional from the input layer through the hidden layers to the output layer. These networks represent the most general type, making no assumptions about the input data and can be used for regression and classification tasks alike (the difference often lies exclusively in the lack of a non-linear activation function in the output layer of classification tasks).
 
 \paragraph{Convolutional Neural Networks} While FFNNs make no assumptions about the input data whatsoever, it is often useful to exploit domain-specific knowledge about the specific input data. For instance, in computer vision the input of a network is typically an image encoded as pixmap with the intensity values of each pixel. In this case, it seems naive and inefficient to assume independence of the inputs ignoring aspects like the principle of locality of neighbouring pixels which are more likely to have a similar colour or intensity than two randomly-selected pixels. 
-% ALT: In contrast to FFNNs which make no assumption about the input whatserver, Convnets are designed to exploit domain-specific knowledge. In computer vision for instance, we can ... 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=1\textwidth]{figures/chapter-2/convnet.png}
 	\caption{Convolutional Neural Network}\label{fig:convnet}   
 \end{figure}
-A convolutional neural network or ConvNet is a special kind of feed-forward neural network whose architecture is designed to exploit the principle of locality in the data. This is typically achieved by alternating \emph{convolutional layers} and \emph{pooling layers}. The convolutional layers run a filter or \emph{kernel} across the their input layer which performs an image convolution and can be thought of a way to detect features (such as edges) in the image. The pooling layers typically perform some kind of aggregation (such as taking the maximum of multiple values) over the previous layer to reduce the dimensionality. 
+A convolutional neural network or \emph{convnet} (illustrated in figure \ref{fig:convnet})is a special kind of feed-forward neural network whose architecture is designed to exploit the principle of locality in the data. This is normally achieved by alternating \emph{convolutional layers} and \emph{pooling layers}. The convolutional layers run a filter or \emph{kernel} across the their input layer which performs an image convolution and can be thought of a way to detect features (such as edges) in the image. The pooling layers usually perform an aggregation (such as taking the maximum of multiple values) over the previous layer to reduce its dimensionality on focus on the salient features.  
 
-While convnets are particularly useful in computer vision and represent the state-of-the-art in image classification % CITE imagenet
-, they can also be applied in other fields in which the data expresses some principle of locality. 
+While convnets are particularly useful in computer vision and represent the state-of-the-art, for instance, in image classification, they can also be applied in other fields in which the data expresses some principle of locality such as natural language processing. 
 
-\paragraph{Recurrent Neural Networks} In contrast to FFNNs and convnets for which the information flow is strictly uni-directional, recurrent neural networks (RNNs) are characterised by some kind of feedback loop that allows the outputs of a unit in layer $L_i$ to be process as input by any other layer $L_j$, even if $i \geq j$.
+\paragraph{Recurrent Neural Networks} In contrast to FFNNs and convnets for which the information flow is strictly uni-directional, recurrent neural networks (RNNs) are characterised by the existence of feedback loops that allows the outputs of a unit in layer $L_i$ to be process as input by any other layer $L_j$, even if $i \geq j$.
 
-This allows the network to keep an internal state which can be conceptualised as memory. Such a memory enables the network to effectively deal with sequences of data such as time-series values, natural language, or even music. 
+This allows the network to learn and store an internal state which can be conceptualised as memory. Such a memory enables the network to effectively deal with sequences of data such as time-series values, natural language, or even acoustic signals like music. 
 
-
-\begin{wrapfigure}{r}{0.4\textwidth}
+\begin{wrapfigure}{r}{0.5\textwidth}
 	\centering
-	\includegraphics[width=0.4\textwidth]{figures/chapter-2/lstm.png}
+	\includegraphics[width=0.5\textwidth]{figures/chapter-2/lstm.png}
 	\caption{LSTM}\label{fig:lstm}   
 \end{wrapfigure}
 
-In spite of the benefits the recurrent architecture of the network provides, it also introduces a number of computational challenges such as the so called \emph{vanishing gradient problem} which stems from the additional distance the gradient is backpropagates (see next section % TODO Reconsider training section. Should it come before? 
-) in the computation graph of the network causing the gradient. In order to circumvent this problem, a number architectures has been proposed for an individual cell within the RNN, most notably \emph{long short-term memory} (LSTM) cells and \emph{gated recurrent units} (GRUs). As illustrated in figure \ref{fig:lstm} an LSTM achieves this using a number of \emph{gates} that allow the cell to decide when to store and when to reset (i.e. forget) its internal state. 
-% TODO Explain this properly. Make sure I fully understand it myself. ;) 
+In spite of the benefits the recurrent architecture of the network provides, it also introduces a number of computational challenges such as the so called \emph{vanishing gradient problem} which stems from the additional distance the gradient is backpropagated (see next section % TODO Reconsider training section. Should it come before? 
+) through the computation graph of the network. In order to circumvent this problem, a number architectures has been proposed for individual cells within the RNN, most notably \emph{long short-term memory} (LSTM) cells and \emph{gated recurrent units} (GRUs). Since RNNs are not of primary interest for the models we investigate for counterfactual inference, the detailed mechanics for these cells are outside the scope of this dissertation.  On a conceptual level, however, LSTM cells address the vanishing gradient problem by utilising a number of \emph{gates} (as illustrated in figure \ref{fig:lstm}) that allow the cell control how the gradient is propagated through the cells, effectively allowing it to decide when to store and when to reset (i.e. forget) its internal state.
 
 Today for many problems in machine learning, RNNs represent the state-of-the-art when dealing with sequential data such as natural language and time-series. 
 
-
-
-\subsection{Training}
-Training a neural network refers to the process of fitting the parameters of the model (i.e. the weights and bias for each cell) to the training data with respect to a given objective function. 
+\subsection{Training}\label{sec:training}
+Training a neural network refers to the process of fitting the parameters of the model (i.e. the weights and biases for each cell) to the training data with respect to a given objective function. 
 
 \paragraph{Objective Function}
 \begin{wrapfigure}{r}{0.4\textwidth}
@@ -267,13 +250,14 @@ Training a neural network refers to the process of fitting the parameters of the
 	\caption{Local Minima}\label{fig:local-minima}   
 \end{wrapfigure}
 
-The objective function (also called \emph{loss function} or \emph{error function}) defines a metric of the performance of the model. It is the goal of the training procedure to appropriate parameters for the model that maximise the performance or minimise its loss respectively. 
+The objective function (also called \emph{loss function} or \emph{error function}) defines a performance metric for the model. It is the goal of the training procedure to infer appropriate parameters for the model that maximise its performance (i.e. minimise its loss). 
 
-Figure \ref{fig:local-minima} illustrates this concept by depicting the graph of an objective function $f$ that takes a one-dimensional input (real numbered scalar). As we can see, the function posses multiple extreme values -- in particular one local minimum at $x = ?$% TODO add proper position
-and a global minimum at $x = ?$. % TODO add proper position. 
+Figure \ref{fig:local-minima} illustrates this concept by depicting the graph of an objective function $f$ that takes a one-dimensional input (real numbered scalar). As we can see, the function possesses multiple extreme values -- in particular one local minimum at $x = ?$% TODO add proper position
+and a global minimum at $x = ?$. % TODO add proper position.  % IMPORTANT!!! GRAPH Add the appropriate positions
 
 
-In cases where an algebraically obtained closed-form solution for the minimum is not feasible or too computationally expensive, the minimum is often obtained by optimisation algorithms (see below). Since these algorithms often operate in a greedy manner, i.e. by a series of local operations that has no knowledge about the global surface of the function, we are facing the potential problem of only finding a local optimum but missing out the global one. As a consequence, it is desirable to use convex objective function that, by definition, only have one (global) minimum. 
+In cases where an algebraically obtained closed-form solution for the minimum is not feasible or too computationally expensive, the minimum is often obtained by optimisation algorithms (see below). Since these algorithms often operate in a \emph{greedy} manner, i.e. by a applying series of local operations that has no knowledge about the global surface of the function, we are facing the potential problem of only finding a local optimum but missing out the global one. As a consequence, it is desirable to use convex objective functions that, by definition, only have one (global) optimum. 
+
 The actual loss function is dependent on the problem task and can be derived by a maximum likelihood estimation (MLE). For regression tasks, a common choice is the mean squared error between the prediction $\hat{Y}$ and the actual output value $Y$ defined as 
 
 
@@ -287,24 +271,21 @@ For (binary) classification problems we typically use the cross-entropy
 \end{equation}
 as loss function. 
 
-\paragraph{Gradient Descent} We typically make use of an optimisation algorithm that tries to minimise the output of our loss function that captures the degree to what extend our prediction differs from the target values. A widely used example is \emph{gradient descent} which is an iterative optimisation algorithm that can be used to find a minimum value of a function. This is achieved by repeatedly computing the gradient of the function at the current position and subtracting a proportion of the gradient from it until the gradient converges towards zero (which is the case at a minimum) or a stopping condition is satisfied. Intuitively, the subtraction of the gradient can be conceptualised by taking iterative steps towards the steepest descent until a minimum value is reached. 
+\paragraph{Gradient Descent} We typically make use of an optimisation algorithm that tries to minimise the output of our loss function by capturing to what extend our predictions differ from the target values. A widely used example is \emph{gradient descent} which is an iterative optimisation algorithm that can be used to find a minimum value of a function. Gradient descent repeatedly computes the gradient of the loss function at the current position and subtracts a proportion of the gradient from it until the gradient converges towards zero (which is the case at a minimum) or a stopping condition is satisfied. Intuitively, the subtraction of the gradient can be conceptualised by taking iterative steps in the direction of the steepest descent until a minimum value is reached. 
 Formally, we are looking for $x = \text{argmin} f(x)$ by iteratively computing
 
 \begin{equation}	
 	\label{eq:gradient-descent-update}
 	x_{n+1} = x_n - \alpha \cdot \nabla f(x_n),
 \end{equation}
-where $x_i$ refers to our position at time iteration $i$ and $\alpha \in \mathbb{R}^+$ is a parameter called the \emph{learning rate} that defines the step size of our descent. Choosing an appropriate learning rate typically represents a trade-off between reducing the number of required iterations (high learning rate) and a making sure the function converges and does not overshoot the actual minimum $x^*$ or oscillates around it. Consequently, it is often desirable to use an \emph{adaptive learning rate} instead, i.e. making $\alpha: \mathbb{N} \rightarrow \mathbb{R}^+$ a function of the current iteration. 
+where $x_i$ refers to our position at iteration $i$ and $\alpha \in \mathbb{R}^+$ is a parameter called the \emph{learning rate} that defines the step size of our descent. Choosing an appropriate learning rate expresses a trade-off between reducing the number of required iterations (high learning rate) and a making sure the function converges and does not "overshoot" the actual minimum $x^*$ causing the algorithm to potentially oscillate around the desired optimum. Consequently, it is often desirable to use an \emph{adaptive learning rate} instead, i.e. making $\alpha: \mathbb{N} \rightarrow \mathbb{R}^+$ a function dependent on the current iteration $i$. 
 
-There two main types of gradient descent: \emph{batch gradient descent} computes the gradient for entire dataset before applying an update rule as defined in equation \ref{eq:gradient-descent-update} which is most exact but computationally expensive as it has to iterate through all $n$ data points in the dataset. In contrast, \emph{stochastic gradient descent} computes the gradient of a random (hence the name) sample and applies an update according to this sample alone which is less computationally expensive. The choice between the batch gradient descend and stochastic gradient descend therefore represents a trade-off between accuracy and computational costs. In addition to this dichotomy, there there exists a hybrid version called \emph{minibatch gradient descent} which computes the gradient on a batch which is a subset of the entire dataset. 
+There two main types of gradient descent: \emph{batch gradient descent} computes the gradient for entire dataset before applying an update rule as defined in equation \ref{eq:gradient-descent-update} which is most exact but computationally expensive as the algorithm has to iterate through all $n$ data points in the dataset before applying a single update. In contrast, \emph{stochastic gradient descent} computes the gradient of a random (hence the name) sample and applies an update according to this sample alone which is less computationally expensive. The choice between batch gradient descend and stochastic gradient descend therefore represents a trade-off between accuracy and computational costs. In addition to this dichotomy, there exists a hybrid variation called \emph{minibatch gradient descent} which computes the gradient on a batch which is a subset of the entire dataset. 
 
-\paragraph{Backpropagation} For gradient-based optimisation algorithms it is mandatory to compute the partial derivatives of the objective function $J$ with respect to any weight $w$ or bias $b$ in the neural network that needs to be learnt. In a deep neural network with multiple hidden layers this might seem rather complex as change of weights influences the outcome (and therefore the loss function) only indirectly by propagating its change through subsequent layers. 
+\paragraph{Backpropagation} For gradient-based optimisation algorithms it is mandatory to compute the partial derivatives of the objective function $L$ with respect to any weight $w$ or bias $b$ in the neural network that needs to be learnt. In a deep neural network with multiple hidden layers this can be a complex task as the change of a weight influences the outcome (and therefore the loss function) only indirectly by propagating its change through subsequent layers. 
 
-In the 1980s, X, Y, and Z % TODO Add history and contribution of backprop. Who invented it? When was it popularised? 
-introduced an efficient method to achieve this which they called the \emph{backpropagation algorithm}. The algorithm conceptualised the network as a concatenation of functions and is based on the simple idea of repeatedly applying the \emph{chain rule} as known in calculus to compute the partial derivatives with respect to each parameter (weights and biases) of interest. 
+The \emph{backpropagation algorithm} \cite{backprop1} introduces an efficient method to compute the partial derivatives. It conceptualised the network as a concatenation of functions and is based on the simple idea of repeatedly applying the \emph{chain rule} known from calculus to compute the partial derivatives with respect to each parameter (weights and biases) of interest. 
 
-
-% TODO Check what's wrong the the floating
 %\begin{wrapfigure}{r}{0.6\textwidth}
 %	\centering
 %	\includegraphics[width=0.6\textwidth]{figures/chapter-2/backpropagation.png}
@@ -317,24 +298,12 @@ introduced an efficient method to achieve this which they called the \emph{backp
 \end{figure}
 
 
-The training is then executed in two alternating phases as illustrated in figure \ref{fig:backpropagation}: In the \emph{forward pass} the inputs are propagated through the network from the input layer through the hidden layers until a predicted outcome $\hat{Y}$ is available in the output layer. Using the predicted outcome $\hat{Y}_i$, the actual outcome $Y_i$, and the loss function we are able to compute a loss \emph{l}.
+The training is then executed in two alternating phases that are illustrated in figure \ref{fig:backpropagation}: In the \emph{forward pass} the inputs are propagated through the network from the input layer through the hidden layers until a predicted outcome $\hat{Y}$ is available in the output layer. Using the predicted outcome $\hat{Y}_i$, the actual outcome $Y_i$, and the loss function $L$ we are able to compute a loss \emph{l}.
 In the second phase -- the \emph{backward pass} the partial derivatives are computed for the weights and biases of each unit all the way back until the first layer after the input layer. 
 
-Once the partial derivatives are computed, we can update each parameter according to our optimisation algorithm (e.g. using gradient descent as described above). 
-The backpropagation algorithm therefore represents an effective mean to compute the gradient of the loss function and can be considered an essential part of the training of neural networks. 
+Once the partial derivatives are computed, we can update each parameter according to our optimisation algorithm, for instance by applying the update rule defined in equation \ref{eq:gradient-descent-update}. 
+The backpropagation algorithm therefore represents an effective technique to compute the gradient of the loss function with respect to the different parameters and is considered an essential part of the training of neural networks. 
 
-
-
-% TODO Check if should include any of the things below
-%
-%
-%\begin{enumerate}
-%	\item What does training mean? What is the main principle? We want to learn parameters (weights+bias). 
-%	\item Backpropagation. History, when was it discovered? How does it work on high-level? What does each pass do? 
-%	\item Explain splits train, test, val
-%	\item Equations... Formalisation
-%	\item Challenges (symmetry, local optima, initialisation, complexity, memory)
-%\end{enumerate}
 
 \subsection{Dropout} \label{sec:dropout}
 As described in section \ref{sec:regularisation}, regularisation is an important concept in machine learning in order to avoid overfitting the training data. While in theory, a traditional approaches like \emph{l1} (lasso) and \emph{l2} (weight-decay) are possible, a number of different regularisation techniques have been proposed that are specific to the mechanics of neural networks. 
