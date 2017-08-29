@@ -32,8 +32,7 @@
 % generating a PDF to send to the printer!
 
 % This adds a "DRAFT" footer to every normal page.  (The first page of each chapter is not a "normal" page.)
-% FINAL remove Draft Remark
-\fancyfoot[C]{\emph{DRAFT Printed on \today}}  
+%\fancyfoot[C]{\emph{DRAFT Printed on \today}}  
 
 % This highlights (in blue) corrections marked with (for words) \mccorrect{blah} or (for whole
 % paragraphs) \begin{mccorrection} . . . \end{mccorrection}.  This can be useful for sending a PDF of
@@ -125,7 +124,7 @@
 \usepackage[noend]{algpseudocode}
 \usepackage{subcaption}
 \usepackage[parfill]{parskip}
-
+\usepackage{textcomp}
 %%%%%%%
 
 
@@ -260,7 +259,6 @@
 %\include{text/appendix-1}
 
 
-
 %%%%% REFERENCES
 
 % Quote for the top of references (just like a chapter quote if you're using them).  Comment to skip.
@@ -273,6 +271,5 @@
 
 {\renewcommand*\MakeUppercase[1]{#1}%
 \printbibliography[heading=bibintoc,title={\bibtitle}]}
-
 
 \end{document}

@@ -12,36 +12,36 @@
 \section{Deep Counterfactual Networks}
 In chapter \ref{ch:3-DCNs} we introduced \emph{deep counterfactual networks} (DCN) with a propensity-based dropout scheme (PD) for the task of counterfactual inference. In the following, we will run a number of experiments on the model to evaluate its performance and compare it to a variety of baseline methods and existing competing approaches. 
 
-Firstly, we introduce the dataset that we are running the experiments on before describing the experimental setup in detail including the used hyper-parameters and relevant implementation details. Finally, we show the results of the experiments provide a discussion of the outcomes and its implications.  
+Firstly, we introduce the dataset that we are running the experiments on before describing the experimental setup in detail including the used hyper-parameters and relevant implementation details. Finally, we show the results of the experiments concluding with  a discussion of the outcomes and its implications.  
 
 \subsection{Dataset}
-As described in section \ref{sec:counterfactual-inference}, due to the very nature of counterfactual inference we are never able to access the ground truth for the counterfactual outcomes for any observational dataset. This poses an enormous challenge when it comes to evaluating the performance of any model used for causal inference on real-world data. In order to deal with this issue, we follow (Hill) % CITE Hill, Johansson..
-and adopt a \emph{semi-synthetic} experimental setup for which we use the actual covariates and treatment assignments from the dataset but simulate the outcomes in order to have access to both the factual and the counterfactual outcomes. Nonetheless, it is important to note that the counterfactual outcome is only used for evaluation purposes and considered as unavailable during training time. 
+As described in section \ref{sec:counterfactual-inference}, due to the very nature of counterfactual inference we are never able to access the ground truth for the counterfactual outcomes in any observational dataset. This poses a significant challenge when it comes to evaluating the performance of models used for causal inference on real-world data. In order to deal with this issue, we follow (\cite{hill, sontag-paper}) and adopt a \emph{semi-synthetic} experimental setup for which we use the actual covariates and treatment assignments from the dataset but simulate the outcomes in order to have access to both the factual and the counterfactual outcomes. Nonetheless, it is important to note that the counterfactual outcomes are only used for evaluation purposes and considered as unavailable during training time. 
 
-The experiments are conducted on the Infant Health and Development Program (IHDP) dataset that was introduced in (Hill, 2012). % CITE Hill
- program that was carried out in the second half of the 1980s tried to aid premature infants at an early age to enhance their cognitive abilities measured in terms of the IQ score. The dataset consists of a total of 747 subjects out of which 139 were treated and 608 controlled. Each subject has 6 continuous and 19 binary features representing attributes of the child such as birth weight, sex, and weeks born pre-term, and relevant attributes of the mother measured around the time of giving birth (e.g. age, educational status, etc.). The outcome are simulated based on a functions that are described as "Response Surface B" setting in (Hill, 2012). % CITE HILL 2012
+The experiments are conducted on the Infant Health and Development Program (IHDP) dataset that was first introduced in (\cite{hill}). This 
+ program, that was carried out in the second half of the 1980s, tried to aid premature infants at an early age to enhance their cognitive abilities measured in terms of their IQ score. 
+ 
+ The dataset consists of a total of 747 subjects out of which 139 were treated and 608 controlled. Each subject has 6 continuous and 19 binary features representing attributes of the child such as birth weight, sex, and the number of weeks born pre-term. Other features include relevant attributes of the mother measured around the time of giving birth (e.g. age, weight, and educational status). The outcomes are simulated based on two functions that are described as \emph{Response Surface B} setting in (\cite{hill}). 
  
 
 \subsection{Experiment Setup} \label{sec:pbd-experiment-setup}
-We are evaluating the performance of a \emph{deep counterfactual network} with \emph{propensity-dropout} which we will refer to as DCN-PD. In our experiment we are using an architecture with $L_s = 2, L_{i,0} =2 , L_{i,1} = 2$, thus $L_{\text{total}} = 4$ total layers, % IMPORTANT Do we consider the depth or the sum of layes as total? Shouldn't it be 6 instead?
-and utilise a fixed number of $h_s^{(l)} = h_{i,0}^{(l)} = h_{i,1}^{(l)} = 200$ hidden units for the $l^{th}$ layer in the network. We are using a ReLU activation function for our network and we evaluate the performance of the model in terms of the mean squared error (MSE)
+We are evaluating the performance of a \emph{deep counterfactual network} with \emph{propensity-dropout} which we will refer to as DCN-PD. In our experiment we are using an architecture with $L_s = 2, L_{i,0} =2 , L_{i,1} = 2$, thus $L_{\text{total}} = 6$ total layers, 
+% IMPORTANT Do we consider the depth or the sum of layes as total? Shouldn't it be 6 instead?
+and utilise a fixed number of $h_s^{(l)} = h_{i,0}^{(l)} = h_{i,1}^{(l)} = 200$ hidden units for the $l^{th}$ layer in the network. We are using ReLU activation functions and evaluate the performance of the model in terms of the mean squared error (MSE)
 % EQUATION Make sure this is correct!
 \begin{equation} \label{eq:mse-ite}
 \text{MSE} = \frac{1}{n}\sum_{i=1}^{n} (T_i(x) - \tilde{T}_i(x))^2 = \frac{1}{n}\sum_{i=1}^{n} ((Y_i^{(1)} - Y_i^{(0)}) - (\tilde{Y}_i^{(1)} - \tilde{Y}_i^{(0)}))^2
 \end{equation}
- of the estimated treatment effect and the true treatment effect (as defined in equation \ref{eq:ite}).  
+ of the estimated treatment effect and the true treatment effect (previously defined in equation \ref{eq:ite}).  
 
-The IHDP dataset is split into a training set comprising 80\% of the data and a test set with the remaining 20\%. We run a total of $N_E = 100$ experiments, each time drawing new outcomes according to the data generation model described in (Hill, 2012), % CITE Hill
+The IHDP dataset is split into a training set comprising 80\% of the data and a test set with the remaining 20\%. We run a total of $N_E = 100$ experiments, each time drawing new outcomes according to the data generation model described in (\cite{hill})
 and report the average MSE across all experiments, each time evaluated exclusively on the out-of-sample test set. 
 
-For the \emph{propensity network} (see \ref{sec:multi-task-learning}) that is used to estimate the propensity scores for each subject, we used $L_p = 2$ layers with $h_p^{(l)}) = 25$ hidden units per layer, trained using an Adam optimiser % CITE ADAM 
-and Xavier initialisation. % CITE XAVIER
-The propensity-dropout is applied as described in section \ref{sec:propensity-based-dropout} and uses $\lambda = 1$. 
+For the \emph{propensity network} (see \ref{sec:multi-task-learning}) that is used to estimate the propensity scores for each subject, we used $L_p = 2$ layers with $h_p^{(l)} = 25$ hidden units per layer, and fit the model using an \emph{Adam} optimiser with \emph{Xavier} initialisation (\cite{adam}).
+The propensity-dropout (using $\lambda = 1$) is applied precisely as defined in section \ref{sec:propensity-based-dropout}. All models were implemented in Python using the \emph{Tensorflow}  framework for computational graphs.
 
-% TODO Should I mention Tensorflow? 
 %The neural network is implemented in Tensorflow %CITE TEnsorflow
 \subsection{Results and Discussion}
-Firstly, we investigate the impact of our propensity-dropout scheme by comparing a DCN-PD to other deep counterfactual networks with regular dropout schemes (that is the dropout probability is fixed throughout all samples and for the hidden units in all layers). Figure \ref{fig:propensity-dropout-boxplot} shows the marginal gains in terms of the MSE achieved by the DCN-PD (right) over a DCN with a dropout probability $p=0.2$ (middle), and a DCN with dropout probability $p=0.5$ (left) in form of a box plot. 
+Firstly, we investigate the impact of our propensity-dropout scheme by comparing a DCN-PD to other deep counterfactual networks with conventional dropout (i.e. the dropout probability is fixed throughout all samples and hidden units in all layers). Figure \ref{fig:propensity-dropout-boxplot} shows the marginal gains in terms of the MSE achieved by the DCN-PD (right) over a DCN with a dropout probability $p=0.2$ (middle), and a DCN with dropout probability $p=0.5$ (left). 
 
 
 
@@ -56,13 +56,13 @@ Firstly, we investigate the impact of our propensity-dropout scheme by comparing
 	\caption{Comparison between the performance of a DCN with propensity-based dropout (right) and DCNs with regular dropout schemes (middle, left) in terms of the mean squared error (lower is better). The propensity-dropout has a regularising effect towards the selection bias and provides the model a higher degree of generalisation. }\label{fig:propensity-dropout-boxplot}
 \end{figure}
 
-As we can observe in the figure, our propensity-based dropout scheme provides a significant improvement over the alternative DCNs for which the  dropout probabilities are uniform throughout all samples in the training set. The result implies that the propensity-based dropout helps the DCN to generalise better to the true feature distribution when trained with an biased dataset such as IHDP (139 treated vs. 608 controlled subjects). Consequently, this suggest that propensity-dropout can be an effective regulariser for the task of counterfactual inference. 
+As we can observe in the figure, our propensity-based dropout scheme provides a significant improvement over the alternative DCNs for which the  dropout probabilities are uniform throughout all samples in the training set. The result implies that the propensity-based dropout helps the DCN to generalise better to the true feature distribution when trained with a biased dataset such as IHDP (139 treated vs. 608 controlled subjects). Consequently, this suggest that propensity-dropout can be an effective regulariser for the task of counterfactual inference. 
 
-In the following, we will look at the performance of a DCN and DCN-PD in comparison to competing state-of-the-art methods shown in table \ref{tab:dcn-pd-results}. Concretely, we compare the mean MSE (aggregated over $N_E = 100$ experiments) that is achieved by our models to the MSE of k-Nearest-Neighbour matching (k-NN), Causal Forests with double-sample tree (WagerAthey, 2015), % CITE Wager Athey
-a classical feed-forward neural network with the treatment assignemnt as input feature (NN-4),
-Bayesian Additive Regression Trees (BART) (Chipman) % CITE CHipman, Hill
-and balancing neural networks (BNN) (Johanson) % CITE JOhannson
-that we discussed in detail in section \ref{sec:representation-learning} and which represent the state-of-the-art for counterfactual inference. 
+In the following, we will look at the performance of a DCN and DCN-PD in comparison to competing state-of-the-art methods shown in table \ref{tab:dcn-pd-results}. Concretely, we compare the mean MSE (aggregated over $N_E = 100$ experiments) that is achieved by our models to the MSE of k-nearest-neighbour matching (k-NN), Causal Forests with double-sample tree (\cite{random-forests}),
+\emph{Bayesian Additive Regression Trees} (BART) (\cite{chipman,hill}), 
+a classical feed-forward neural network with the treatment assignment as input feature (NN-4),
+and a \emph{balancing neural network} (BNN) (\cite{sontag-paper}) that we discussed in detail in section \ref{sec:representation-learning} and which represents the state-of-the-art for counterfactual inference. 
+
 In order to ensure a fair comparison, for the BNN and the NN-4 we are also using $4$ layers, each with $200$ hidden units trying to hold as many hyper-parameters as possible constant. The DCN uses regular dropout scheme with a dropout probability of $p=0.2$ and the DCN-PD is regularised using our propensity-based dropout.
 
 As we can see in table \ref{tab:dcn-pd-results}, the DCN-PD achieves the lowest MSE and outperforms the other methods. The BNN, representing  a strong benchmark as it effectively handles the selection bias by learning a balanced representation for the input features, represents the most competitive alternative. Lastly, the performance gains that our DCN-PD achieves over a the NN-4 model suggest that the multi-task learning framework is an effective conception of counterfactual inference that outperforms direct modelling approaches which consider the treatment assignment as a regular input feature.   %TODO Should I mention that DCNs don't perform too wel? 
