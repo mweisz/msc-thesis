@@ -61,11 +61,10 @@ As we can observe in the figure, our propensity-based dropout scheme provides a 
 In the following, we will look at the performance of a DCN and DCN-PD in comparison to competing state-of-the-art methods shown in table \ref{tab:dcn-pd-results}. Concretely, we compare the mean MSE (aggregated over $N_E = 100$ experiments) that is achieved by our models to the MSE of k-nearest-neighbour matching (k-NN), Causal Forests with double-sample tree (\cite{random-forests}),
 \emph{Bayesian Additive Regression Trees} (BART) (\cite{chipman,hill}), 
 a classical feed-forward neural network with the treatment assignment as input feature (NN-4),
-and a \emph{balancing neural network} (BNN) (\cite{sontag-paper}) that we discussed in detail in section \ref{sec:representation-learning} and which represents the state-of-the-art for counterfactual inference. 
+and a \emph{balancing neural network} (BNN) (\cite{sontag-paper}) that we discussed in detail in section \ref{sec:representation-learning} and which represents the state-of-the-art for counterfactual inference. In order to ensure a fair comparison, for the BNN and the NN-4 we are also using $4$ layers, each with $200$ hidden units trying to hold as many hyper-parameters as possible constant. The DCN uses a regular dropout scheme (dropout probability of $p=0.2$) and the DCN-PD is regularised using our propensity-based dropout.
 
-In order to ensure a fair comparison, for the BNN and the NN-4 we are also using $4$ layers, each with $200$ hidden units trying to hold as many hyper-parameters as possible constant. The DCN uses regular dropout scheme with a dropout probability of $p=0.2$ and the DCN-PD is regularised using our propensity-based dropout.
+As we can see in table \ref{tab:dcn-pd-results}, the DCN-PD achieves the lowest MSE and outperforms the other methods. The BNN, representing  a strong benchmark as it effectively handles the selection bias by learning a balanced representation for the input features, represents the most competitive alternative. Lastly, the performance gains that our DCN-PD achieves over the NN-4 suggest that a multi-task learning framework is an effective conception of counterfactual inference that outperforms direct modelling approaches which consider the treatment assignment as a regular input feature.
 
-As we can see in table \ref{tab:dcn-pd-results}, the DCN-PD achieves the lowest MSE and outperforms the other methods. The BNN, representing  a strong benchmark as it effectively handles the selection bias by learning a balanced representation for the input features, represents the most competitive alternative. Lastly, the performance gains that our DCN-PD achieves over a the NN-4 model suggest that the multi-task learning framework is an effective conception of counterfactual inference that outperforms direct modelling approaches which consider the treatment assignment as a regular input feature.   %TODO Should I mention that DCNs don't perform too wel? 
 
 Concluding, it can be said that our proposed model of deep counterfactual networks using propensity-dropout (DCN-PDs) represents a promising approach to using deep neural networks for counterfactual inference that it is able to compete with and potentially even outperform existing methods. 
 
@@ -89,11 +88,11 @@ Concluding, it can be said that our proposed model of deep counterfactual networ
 
 
 \section{Architecture Learning for DCN}
-In chapter \ref{ch:4-DCN-LAs} we introduced an efficient approach to automatically infer an appropriate architecture for \emph{deep counterfactual networks} (DCN) without the need for computationally expensive hyper-parameter optimisation (e.g. grid search, random search, or bayesian optimisation). 
+In chapter \ref{ch:4-DCN-LAs} we introduced an efficient approach to automatically inferring an appropriate architecture for \emph{deep counterfactual networks} (DCN) without the need for computationally expensive hyper-parameter optimisation (e.g. grid search, random search, or bayesian optimisation). 
 
 In the following, we will run a number of experiments to investigate the performance of the model with the inferred architecture. In particular, we investigate how the different characteristics (selection bias, shared complexity, and outcome-specific complexity) that we defined in section \ref{sec:relevant-characteristics} influence the learnt architecture and the performance of the model. 
 
-Firstly, we introduce a purely synthetic dataset that gives us full control over the relevant characteristics, and a real-world dataset for which the characteristics have to be inferred according to our approach. Thereafter, we describe the experimental setup in detail including the used hyper-parameters and relevant implementation details before showing the results of the experiments and concluding with a discussion of the outcomes and its implications.  
+Firstly, we introduce a purely synthetic dataset that gives us full control over the relevant characteristics, and a real-world dataset for which the characteristics have to be inferred first. Thereafter, we describe the experimental setup in detail including the used hyper-parameters and relevant implementation details before presenting the results of the experiments and concluding with a discussion of the outcomes and its implications.  
 
 
 \subsection{Datasets}
@@ -111,7 +110,7 @@ keeping each covariate strictly non-negative. For the treatment assignment indic
 \begin{equation}
 W_i \sim Bernoulli(\tilde{p}(X_i))
 \end{equation}
-where $\tilde{p}(X_i)$ represents the subject's propensity score and the parameter $\alpha \in \mathbb{R}_{\geq0}$ gives us a way to control the imbalance between the treated and untreated subjects. For $\alpha = 0$, we get $\tilde{p}(X_i) = 0.5$ corresponding to a maximum balance between the number of treated and untreated subjects whereas an increasing alpha shifts the distribution towards a higher proportion of treated subjects.
+where $\tilde{p}(X_i)$ represents the subject's estimated propensity score and the parameter $\alpha \in \mathbb{R}_{\geq0}$ lets us control the imbalance between the treated and untreated subjects. For $\alpha = 0$, we get $\tilde{p}(X_i) = 0.5$ corresponding to a maximum balance between the number of treated and untreated subjects whereas an increasing alpha shifts the distribution towards a higher proportion of treated subjects.
 % TOTO Which quantity does it correspond to
 We compute both outcomes $Y^{(0)}, Y^{(1)} \in \mathbb{R}$ as
 \begin{equation}
@@ -135,36 +134,40 @@ Each outcome function consists of a linear part governed by the coefficients in 
 % TODO Add A, B annotation for the different parts in the equation
 % TODO Continue here. In the worst case, don't spend too much time thinking about the meaning. Come back to this later but for now just write the formula for drawing lambda and kappa. 
 
-The vectors $\lambda^{(1)}, \mu^{(1)}$ for the treated outcome function $f_1$ are drawn based on the data generation process designated as the "Response Surface B" setting in (Hill, 2012). For the outcome function $f_0$ of untreated subjects, we draw the vectors $\lambda^{(0)}, \mu^{(0)}$ from a normal distribution centred around their corresponding treated counterpart, i.e.    
-%TODO Cite Hill
+The vectors $\lambda^{(1)}, \mu^{(1)}$ for the treated outcome function $f_1$ are drawn based on the data generation process designated as the "Response Surface B" setting in (\cite{hill}). For the outcome function $f_0$ of untreated subjects, we draw the vectors $\lambda^{(0)}, \mu^{(0)}$ from a normal distribution centred around their corresponding treated counterpart, i.e.    
 
 
 \begin{equation}
 \lambda^{(0)}_i \sim \mathcal{N}(\lambda^{(1)}_i, \sigma)  \hspace{1cm} \mu^{(0)}_i \sim \mathcal{N}(\mu^{(1)}_i, \sigma),
 \end{equation}
 with a standard deviation $\sigma$. This way, we can use the parameter $\sigma \in \mathbb{R}^0$ to control the similarity between the two outcome surfaces. 
-Finally, we can set $Y_i = W_i \cdot Y^{(1)}_i + (1 - W_i) \cdot Y^{(0)}_i$ representing our \emph{factual outcome} for subject $i$. The other (i.e. counterfactual) outcome is not used in the training set but needed later for evaluation purposes. \\
+Finally, we can set 
 
-In summary, we receive a synthetic model which is parametrised by $\alpha$, $\beta^{(0)}$, $\beta^{(1)}$, and $\sigma$ each corresponding directly to a different characteristic we are interested in. The parameter $\alpha$ defines the skewness of the treatment assignment (i.e. the portion of treated vs. untreated subjects) and corresponds to $\mathbf{B}$,  $\beta^{(0)}$ and $\beta^{(1)}$ define the emphasis of the outcome-specific parts of the equation in relation to their common linear part and correlate with $\mathbf{C_0}, \mathbf{C_1}$, and $\sigma$ determines the overall similarity between the two outcome surfaces directly corresponding to $\mathbf{S}$. 
+\begin{equation}
+Y_i = W_i \cdot Y^{(1)}_i + (1 - W_i) \cdot Y^{(0)}_i
+\end{equation}
+
+ representing our \emph{factual outcome} for subject $i$. The other (i.e. counterfactual) outcome is not used in the training set but needed later for evaluation purposes. \\
+
+In summary, we receive a synthetic model which is parametrised by $\alpha$, $\beta^{(0)}$, $\beta^{(1)}$, and $\sigma$ each corresponding directly to a different characteristic we are interested in. The parameter $\alpha$ defines the skewness of the treatment assignment (i.e. the portion of treated vs. untreated subjects) and corresponds to the selection bias $\mathbf{B}$. The parameters $\beta^{(0)}$ and $\beta^{(1)}$ define the emphasis of the outcome-specific parts of the equation in relation to their common linear part and correlate with $\mathbf{C_0}, \mathbf{C_1}$. Finally, the parameter $\sigma$ determines the overall similarity between the two outcome surfaces and is correlated with $\mathbf{S}$. 
 
 % TODO Mention the similarities between the synthetic model and the empirical model
 
-% TODO Add UNOS
 \subsubsection{UNOS}
-In addition to the fully synthetic dataset above, we also conduct the experiments on a real-world dataset in order to see how well our model generalises beyond synthetic data. For this purpose we are using the United Network for Organ Sharing (UNOS) heart transplant dataset  
-that contains information about patients who underwent a heart transplantation during the years 1987 -- 2015 (Cecka 1996).% CITE CECKA (Jinsung Paper)
+In addition to the dataset defined above, we also conduct the experiments on a real-world dataset in order to see how well our model generalises beyond synthetic data. For this purpose we are using the United Network for Organ Sharing (UNOS) transplant dataset  
+that contains information about patients who underwent an organ transplantation during the years 1987 -- 2015 (\cite{unos}).
 
-Since we are dealing with the task of causal inference we are once again faced with the problem of not being able to access the ground-truth counterfactual outcomes. Therefore, we are adopting the semi-synthetic setting where we use the original covariates and the treatment assignment from the dataset but model the outcomes according to the "Response Surface B" setting described in (Hill, 2012). % CITE HILL 2012
+Since we are dealing with the task of causal inference, we are once again faced with the problem of not being able to access the ground-truth counterfactual outcomes. Therefore, we are again adopting the semi-synthetic setting where we use the original covariates and the treatment assignment from the dataset but model the outcomes according to the \emph{Response Surface B} setting described in (\cite{hill}).
 
 %Experiments were conducted using the UNOS database for patients who underwent a heart transplant over the years from 1987 to 2015 (Cecka 1996). We use the “Thoracic DATA” dataset in the UNOS database as our root dataset. In this dataset, all patients were followed-up until death, i.e. the post-transplant survival times for all patients are avail- able in the dataset. Of the 148,512 patients in the “Thoracic DATA” who underwent either heart or lung transplant, we extract 60,516 patients who underwent a heart transplant. Of the 60,516 patients who underwent a heart transplant, we exclude 3,800 patients (6.28%) who are still alive (right- censored), and we only use the 56,716 patients for whom we have the exact survival (lifetime) information.
 
 
 \subsection{Experiment Setup}
-The experiments are conducted in a setting similar to the ones described in section \ref{sec:pbd-experiment-setup}. For instance, this means using ReLU activation functions, utilising 200 hidden units per layer, and considering the MSE over estimated treatment effect (see equation \ref{eq:mse-ite})as our evaluation metric. 
+The experiments are conducted in a similar setting to the one described in section \ref{sec:pbd-experiment-setup}. For instance, we are again using ReLU activation functions, utilising 200 hidden units per layer, and considering the MSE over estimated treatment effect (see equation \ref{eq:mse-ite}) as our evaluation metric. 
 
 The main difference is that we are not assuming any specific values for the numbers of layers $L_s, L_{i,0},$ and $L_{i,1}$ as it is our very objective to automatically learn an appropriate architecture for our model by exploiting inferred characteristics of the dataset. For the sake of fairness and  comparability with the competing models, we limit the total number of layers in the network to $L_{\text{total}} = 4$. 
 
-The synthetic and the UNOS dataset are each split into a training set comprising 80\% of the data and a test set with the remaining 20\%. We run a total of $N_E = 100$ experiments, each time drawing new outcomes according to the data generation models in the previous sections
+The synthetic and the UNOS dataset are each split into a training set comprising 80\% of the data and a test set with the remaining 20\%. We run a total of $N_E = 100$ experiments, each time drawing new outcomes according to the data generation discussed in the previous sections
 and report the average MSE across all experiments, each time evaluated exclusively on the out-of-sample test set. 
 
 %For the \emph{propensity network} (see \ref{sec:multi-task-learning}) that is used to estimate the propensity scores for each subject, we used $L_p = 2$ layers with $h_p^{(l)}) = 25$ hidden units per layer, trained using an Adam optimiser % CITE ADAM 
@@ -174,19 +177,19 @@ and report the average MSE across all experiments, each time evaluated exclusive
 \subsection{Results}
 
 \subsubsection{Synthetic Model} \label{sec:data-generation}
-Normally, we would first need to estimate the relevant characteristics from the data (see algorithm \ref{fig:algorithm}) in order to use them to infer an appropriate architecture for the DCN-LA. For the synthetic dataset, however, we can skip the estimation as we have access to the parameters $\mathbf{B}, \mathbf{S}, \mathbf{C_0}, \mathbf{C_1}$ directly as a part of our generation process described in  section \ref{sec:synthetic-model}. 
+Normally, we would first need to estimate the relevant characteristics from the data (see algorithm \ref{fig:algorithm}) in order to use them to infer an appropriate architecture for the DCN. For the synthetic dataset, however, we can skip the estimation as we have access to the parameters $\mathbf{B}, \mathbf{S}, \mathbf{C_0}, \mathbf{C_1}$ directly as a part of our generation process described in  section \ref{sec:synthetic-model}. 
 
-In the following, we investigate how the inferred architecture of the DCN-LA is influenced by the characteristics of the synthetic dataset.  \\
+We call a DCN whose architecture was learnt using our approach a \emph{DCN-LA} and in the following, we investigate how the inferred architecture of the DCN-LA is influenced by the characteristics of the dataset.  \\
 
-\textbf{i) Influence of similarity measure S:} 
-Figure \ref{fig:syn-sigma} shows the effect of the similarity measure \textbf{S} of a dataset on the DCN-LA in terms of the learnt architecture (\ref{fig:syn-sigma-ratios}) and its performance (\ref{fig:syn-sigma-mse}) in comparison with competing approaches. 
+\textbf{i) Influence of Shared Complexity:} 
+Figure \ref{fig:syn-sigma} shows the effect of the similarity measure \textbf{S} of different datasets on the DCN-LA in terms of the learnt architecture (\ref{fig:syn-sigma-ratios}) and its performance (\ref{fig:syn-sigma-mse}) in comparison with competing approaches. 
 
-Looking at the architecture, we can see that for synthetic datasets with a high level of similarity ($\mathbf{S} \approx 0$), the DCN-LA learns an architecture with a high number of shared layers in relation to the total number of layers. In contrast, for datasets with a decreasing similarity ($\mathbf{S} \rightarrow 2$) % MATH Is this an appropriate notation? 
-the number of shared layers drops in favour of more outcome-specific layers. 
+Looking at the architecture, we can see that for synthetic datasets with a high level of similarity ($\mathbf{S} \approx 0$), the DCN-LA learns an architecture with a high number of shared layers in relation to the total number of layers. In contrast, for datasets with a low similarity ($\mathbf{S} \approx 2$) the number of shared layers drops significantly in favour of more outcome-specific layers. 
 
-Figure \ref{fig:syn-sigma-mse} shows the MSE of the individualised treatment effect (ITE) for our evaluation of the learnt architecture (DCN-LA) in comparison with other existing methods. As can be seen in the graph, unlike a standard feed-forward neural network (NN4), the DCN-LA is able to adapt well even in cases where the response surface are very different from each other. This is explained by the fact that the DCN-LA accommodates different response surfaces by learning an architecture with few numbers of shared layers and a high number of individual layers. \\
+Looking at the performance of our DCN-LA in comparison with competing approaches, we can see that unlike a standard feed-forward neural network (NN4) and a conventional DCN, our model is able to adapt well to cases where the response surface are very different from each other. This is can be explained by the fact that the DCN-LA accommodates different response surfaces by learning an architecture with few numbers of shared layers in favour of a high number of individual layers. \\
+
 % GRAPHS Redo graphs. S instead of sigma. Make axis labels bigger. Re-label legend to reflect Rx etc...
-\begin{figure}[h]
+\begin{figure}[]
 	\centering
 		\caption{A caption for both images}\label{fig:syn-sigma}
 	\begin{subfigure}{\linewidth}
@@ -202,8 +205,8 @@ Figure \ref{fig:syn-sigma-mse} shows the MSE of the individualised treatment eff
  
 \end{figure}  
 
-\textbf{ii) Influence of the selection bias and response surface complexity:}
-Figure \ref{fig:syn-beta} illustrates how the learnt architecture of the DCN-LA changes depending on the parameters $\mathbf{C}_0$ and $\mathbf{C}_1$ which measure the individual complexity of the respective outcome surface. As can be observed in the graph, the more complex the response surface of $Y^{(j)}$, the higher is the number of outcome-specific layers $L_{j,0}$ in the learnt model in relation to the shared layers and the outcome-specific layers of $Y^{(1-j)}$ leading to an asymmetric architecture. 
+\textbf{ii) Influence of Selection Bias and Outcome-Specific Complexities:}
+Figure \ref{fig:syn-beta} illustrates how the learnt architecture of the DCN-LA changes depending on the parameters $\mathbf{C}_0$ and $\mathbf{C}_1$ which measure the individual complexity of the respective outcome surface. As can be observed in the graph, the more complex the response surface of $Y^{(j)}$, the higher is the number of outcome-specific layers $L_{j,0}$ of the DCN-LA in relation to the shared layers and the outcome-specific layers of $Y^{(1-j)}$.
 
  \begin{figure}[h]
 	\centering
@@ -244,17 +247,20 @@ Figure \ref{fig:syn-beta} illustrates how the learnt architecture of the DCN-LA 
 	
 \end{figure}
 
-This observation corresponds well with our intuition that a more complex outcome requires a higher variance of the model reflected in a higher number of layers for the respective outcome. 
+This observation resonates well with our intuition that a more complex outcome requires a higher variance of the model, reflected in a higher number of layers for the respective outcome. 
 
 
-The differences between the learnt architectures for $\mathbf{C}_0$ and $\mathbf{C}_1$ can be explained in terms of the selection bias $\mathbf{B}$. The datasets used for the models on the right-hand side were generated with a selection bias of $\mathbf{B} = 0.75$ leading to a higher proportion of the subjects being treated than for the dataset shown on the left-hand side ($\mathbf{B} = 0.5$). As a consequence, the datasets with an strong selection bias are more imbalanced and have a higher number of subjects for the respective outcome, allowing the model to utilise a higher variance for the outcome with the larger population. 
+The differences between the learnt architectures for $\mathbf{C}_0$ and $\mathbf{C}_1$ can be explained in terms of the selection bias $\mathbf{B}$. The datasets used for the models on the right-hand side were generated with a selection bias of $\mathbf{B} = 0.75$ leading to a higher proportion of treated subjects than for the datasets shown on the left-hand side ($\mathbf{B} = 0.5$). As a consequence, datasets on the right are more imbalanced requiring a more asymmetric architecture. 
 
 
 \subsubsection{UNOS}
-For the UNOS dataset we compare the performance of a DCN-LA, i.e. a DCN whose architecture was learnt according to our empirical model, to a standard DCN (see chapter \ref{ch:3-DCNs}), a feed-forward neural network with $4$ layers (NN-4), and a k-nearest-neighbour (k-NN) baseline approach.  
+For the UNOS dataset we compare the performance of a DCN-LA whose architecture was learnt according to our empirical model, to a standard DCN (see chapter \ref{ch:3-DCNs}), a feed-forward neural network with $4$ layers (NN-4), and a k-nearest-neighbour (k-NN) baseline approach.  
 
-As we can see in table \ref{tab:dcn-la-results}, the DCN-LA achieves the lowest MSE outperforming the other methods. However, it has to be noted that the gain of the DCN-LA over the default DCN is only marginal. This might be due to the fact that the estimated characteristics, $\mathbf{B}, \mathbf{S}, \mathbf{C_0}, \mathbf{C_1}$ % TODO Should I provide concrete values? 
-were relatively balanced reducing the potential of the method to learn a distinctive architecture. Nevertheless, the result implies that the approach of automatically deriving an appropriate architecture for a DCN can also be effectively applied to real-world dataset. 
+As we can see in table \ref{tab:dcn-la-results}, the DCN-LA achieves the lowest MSE outperforming the other methods. However, it has to be noted that the gain of the DCN-LA over the default DCN is only marginal. This might be due to the fact that
+ %the estimated characteristics $\mathbf{B}, \mathbf{S}, \mathbf{C_0}, \mathbf{C_1}$ of the dataset 
+ the UNOS dataset expresses relatively well-balanced characteristics, reducing the potential of our model to learn a distinctive architecture that is significantly different from the standards DCN. 
+ 
+% Nevertheless, the results imply that the approach of automatically deriving an appropriate architecture for a DCN can also be applied to real-world dataset. 
 %
 %The BNN, representing  a strong benchmark as it effectively handles the selection bias by learning a balanced representation for the input features, represents the most competitive alternative. Lastly, the performance gains that our DCN-PD achieves over a the NN-4 model suggest that the multi-task learning framework is an effective conception of counterfactual inference that outperforms direct modelling approaches which consider the treatment assignment as a regular input feature.
 
@@ -272,11 +278,11 @@ were relatively balanced reducing the potential of the method to learn a distinc
 \end{table}
 
 \subsection{Discussion}
-The results above suggest that our proposed approach of automatically inferring an appropriate DCN architecture based on learnt characteristics of the dataset has the potential to significantly improve the performance of the model by reducing the MSE of the individualised treatment effect. 
+The results of the conducted experiments suggest that our proposed approach of automatically inferring an appropriate DCN architecture based on learnt characteristics of the dataset has the potential to improve the performance of the learnt models. 
 
-As we have seen in the synthetic model, the DCN-LA performs particularly well when dealing with highly-imbalanced data (e.g. high propensity score, little shared complexity, and significantly different outcome surfaces). In these cases the DCN-LA is able to adapt an asymmetric architecture that significantly outperforms symmetric DCNs and other methods. 
+As we have seen for the synthetic datasets, the DCN-LA performs particularly well when dealing with imbalanced data (e.g. high selection bias and a small degree of shared complexity). In these cases the DCN-LA is able to adapt by learning an asymmetric architecture that significantly outperforms symmetric DCNs and other methods. 
 
-However, the results on the UNOS dataset imply that our approach faces difficulties when dealing with real-world data that only expresses subtle imbalances that could be exploited. In these cases, a potential limitation may lie in the fact that the empirical model we use to infer appropriate ratios was pre-trained on \emph{synthetic} datasets that might display different properties and feature distributions than our real-world dataset. 
+However, the results on the UNOS dataset imply that our approach faces difficulties when dealing with real-world data that only expresses subtle imbalances that could be exploited. In these cases, a potential limitation may lie in the fact that the empirical model we use to infer appropriate ratios was pre-trained on \emph{synthetic} datasets. These datasets might express different properties than the real-world dataset, reducing the ability of the model to generalise. 
 
 Nevertheless, even though the performance gain of the DCN-LA on the real-world dataset is marginal, the learnt architecture was derived without the need for computationally expensive hyper-parameter optimisation. So while our model might not always improve the solution quality, it has the potential to drastically reduce the computational costs of the training. 
 
