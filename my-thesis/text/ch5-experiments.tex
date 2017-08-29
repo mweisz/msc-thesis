@@ -152,7 +152,7 @@ In summary, we receive a synthetic model which is parametrised by $\alpha$, $\be
 % TODO Add UNOS
 \subsubsection{UNOS}
 In addition to the fully synthetic dataset above, we also conduct the experiments on a real-world dataset in order to see how well our model generalises beyond synthetic data. For this purpose we are using the United Network for Organ Sharing (UNOS) heart transplant dataset  
-that contains information about patients who underwent a herat transplantation during the years 1987 -- 2015 (Cecka 1996).% CITE CECKA (Jinsung Paper)
+that contains information about patients who underwent a heart transplantation during the years 1987 -- 2015 (Cecka 1996).% CITE CECKA (Jinsung Paper)
 
 Since we are dealing with the task of causal inference we are once again faced with the problem of not being able to access the ground-truth counterfactual outcomes. Therefore, we are adopting the semi-synthetic setting where we use the original covariates and the treatment assignment from the dataset but model the outcomes according to the "Response Surface B" setting described in (Hill, 2012). % CITE HILL 2012
 
@@ -173,7 +173,7 @@ and report the average MSE across all experiments, each time evaluated exclusive
 
 \subsection{Results}
 
-\subsubsection{Synthetic Model}
+\subsubsection{Synthetic Model} \label{sec:data-generation}
 Normally, we would first need to estimate the relevant characteristics from the data (see algorithm \ref{fig:algorithm}) in order to use them to infer an appropriate architecture for the DCN-LA. For the synthetic dataset, however, we can skip the estimation as we have access to the parameters $\mathbf{B}, \mathbf{S}, \mathbf{C_0}, \mathbf{C_1}$ directly as a part of our generation process described in  section \ref{sec:synthetic-model}. 
 
 In the following, we investigate how the inferred architecture of the DCN-LA is influenced by the characteristics of the synthetic dataset.  \\

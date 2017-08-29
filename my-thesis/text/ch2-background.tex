@@ -357,7 +357,7 @@ Consequently, the number of layers corresponds to the classical trade-off betwee
 \paragraph{ii) Number of units per layer} In addition to the number of hidden layers, we need to decide on an appropriate number of units per hidden layer (network \emph{width}). The decision follows a similar rationale to the number of layers: A high number of units per layer increases the variance of the model allowing it to accommodate more complexity while increasing the risk of over-fitting.  
 
 
-\subsubsection{Hyper-Parameter Optimisation}
+\subsubsection{Hyper-Parameter Optimisation} \label{sec:hyper-param-optimisation}
 In contrast to ordinary parameters (i.e. weights and biases) of the model, hyper-parameters are typically not learnt during training but need to be chosen a-priori. However, there are three main techniques for deriving suitable hyper-parameters:
 
 \paragraph{i) Grid Search} The most basic form of finding appropriate hyper-parameters is to perform a \emph{grid search}. This means iteratively trying a set of candidate values for each hyper-parameter leading to an exhausting search over the space of potential hyper-parameters. After each iteration, the model is trained and then evaluated on a dedicated \emph{cross validation set} which is a subset of the entire dataset disjoint from the training and test set. The set of hyper-parameters with the maximum performance is ultimately chosen for the model.   
