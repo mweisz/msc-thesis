@@ -10,14 +10,14 @@
 \section{Summary and Contributions}
 In the scope of this thesis we have investigated the task of counterfactual inference using deep neural networks. 
 
-In particular, we have introduced the concept of \emph{deep counterfactual networks} (DCNs) that represent a novel approach to causal inference by conceptualising it as a multi-task learning problem. Furthermore, we have proposed \emph{propensity-dropout} (PD), a novel variation of conventional dropout that utilises the individual propensity scores during regularisation. This approach allows us to effectively counteract the problem of classical problem of \emph{covariate shift} between the factual and counterfactual feature distribution caused by the selection bias of the treatment assignment policy. 
+In particular, we have introduced the concept of \emph{deep counterfactual networks} (DCNs) that represent a novel approach to causal inference by conceptualising it as a multi-task learning problem. Furthermore, we have proposed \emph{propensity-dropout} (PD), a novel variation of conventional dropout that utilises the individual propensity scores during regularisation. This approach allows us to effectively address the classical problem of \emph{covariate shift} between the factual and counterfactual feature distributions caused by the selection bias of the treatment assignment policy. 
 
-Experiments conducted on the \emph{IHDP dataset} in a semi-synthetic setting (typically required for the evaluation of any counterfactual inference task) show that our model of \emph{deep counterfactual networks} with \emph{propensity-dropout} (DCN-PD) outperform the existing methods and provide a significant improvements for the task of counterfactual inference and the prediction of individualised treatment effects. 
+Experiments conducted on the \emph{IHDP dataset} in a semi-synthetic setting (typically required for the evaluation of any counterfactual inference task) imply that our model of \emph{deep counterfactual networks} with \emph{propensity-dropout} (DCN-PD) can outperform the existing methods and provide a significant improvements for the task of counterfactual inference and the prediction of individualised treatment effects. 
 
 
-In addition, we have introduced an efficient way of automatically learning an appropriate architecture for DCNs by exploiting relevant characteristics of the specific dataset. This is achieved by training an empirical model a-priori on a large number of synthetic datasets for which we can fully control the relevant characteristics.
+In addition, we have presented an efficient way of automatically learning an appropriate architecture for DCNs by exploiting relevant characteristics of the specific dataset. This is achieved by training an empirical model a-priori on a large number of synthetic datasets for which we can fully control the relevant characteristics.
 
-Concluding, it can be said that our proposed models -- in particular the DCN-PDs -- show promising first results and have the potential of competing and even outperforming the state-of-the-art. % TODO, also PD enables interpretability
+Concluding, it can be said that our proposed models --- in particular DCN-PDs --- show promising first results and have the potential of competing with and even outperforming the state-of-the-art. % TODO, also PD enables interpretability
 
 Due to the widespread applicability of counterfactual inference, the implications of such an  improvement in this task are highly relevant to a variety of domains such as healthcare, education, economics, and politics -- helping decision-makers in these fields towards more informed and ultimately better interventions. 
 %\section{Contributions} %TODO How does it relate to contributions in intro? 
@@ -25,13 +25,13 @@ Due to the widespread applicability of counterfactual inference, the implication
 \section{Limitations}
 Despite the successes implied by the results of the experiments, it is important to point out limitations and potential shortcomings of our model which might be considered the foundation for future work (see next chapter) in the field of counterfactual inference. 
 
-Firstly, like most existing methods for causal inference our models focus on a \emph{binary} setting in which we are only interested in the outcome or effect of a single treatment which is either present or not. However, the complex governing mechanics that can be found in many real-world problems might require a more general setting in which we are interested in \emph{multiple treatments} and their potential correlations simultaneously.
+Firstly, like most existing methods for causal inference our models focus on a \emph{binary} setting in which we are only interested in the outcome or effect of a single treatment which is either present or not. However, the complex governing mechanics that can be found in many real-world problems might require a more general setting in which we consider \emph{multiple treatments} and their potential correlations simultaneously.
 
-Secondly, we are currently treating the input features of the context or subject as static, not taking into account any \emph{temporal} dependencies. In many problem areas such as healthcare, however, data typically consists of time-series data (e.g. blood pressure values measured at multiple times during a period of time) which our model is currently not able to accommodate in a way that preserves the temporal information. 
+Secondly, we are currently treating the input features of the context or subject as static, not taking into account any \emph{temporal} dependencies. In many problem areas such as healthcare, however, data typically consists of time-series data (e.g. blood pressure values measured at multiple times over a long period) which our model is currently not able to accommodate in a way that preserves the temporal information. 
 
-Thirdly, our proposed approach of automatically inferred an appropriate DCN architecture for a given dataset is currently based on an empirical model that was trained on a fully-synthetic dataset. This might be considered a limiting factor for the model to generalise to real-world in cases where the dataset expresses significantly different properties than our empirical model.  
+Thirdly, our proposed approach of automatically inferring an appropriate DCN architecture for a given dataset is currently based on an empirical model that was trained on a fully-synthetic dataset. This might be considered a limiting factor for the model to generalise to real-world settings in cases where the dataset expresses significantly different properties than our empirical model.  
 
-Nevertheless, considering the progress that has been made in the relatively short time frame of the project we are positive that these challenges can be addressed and ultimately overcome in future research.
+Nevertheless, considering the progress that has been made in the relatively short time frame of this project, we are positive that these challenges can be addressed and ultimately overcome in future research.
 
 
 %
